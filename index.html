@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>ลงเวลาทำงาน</title>
+</head>
+<body class="bg-slate-50 antialiased">
+    <div class="max-w-md mx-auto min-h-screen flex flex-col p-4">
+        <header class="text-center py-6">
+            <h1 class="text-2xl font-bold text-blue-700">ระบบลงเวลาทำงาน</h1>
+        </header>
+
+        <main class="flex-grow space-y-4">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                <label class="block text-sm font-medium text-slate-500 mb-1">ชื่อพนักงาน</label>
+                <select id="empList" class="w-full p-3 bg-slate-100 rounded-xl mb-4 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option>กำลังโหลดรายชื่อ...</option>
+                </select>
+
+                <label class="block text-sm font-medium text-slate-500 mb-1">สถานที่ปฏิบัติงาน</label>
+                <select id="locList" class="w-full p-3 bg-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option>กำลังโหลดสถานที่...</option>
+                </select>
+            </div>
+
+            <div class="mb-6 p-4 bg-orange-50 rounded-2xl border border-orange-200">
+                 <h3 class="text-orange-700 font-bold mb-3 text-center">☀️ กะเช้า (08.00 - 20.00)</h3>
+           <div class="grid grid-cols-2 gap-3">
+                  <button onclick="submitData('เข้างาน (กะเช้า)')" class="bg-orange-500 text-white p-4 rounded-xl font-bold shadow-md active:scale-95 transition">เข้างาน</button>
+                  <button onclick="submitData('ออกงาน (กะเช้า)')" class="bg-slate-700 text-white p-4 rounded-xl font-bold shadow-md active:scale-95 transition">ออกงาน</button>
+             </div>
+            </div>
+
+            <div class="mb-6 p-4 bg-indigo-50 rounded-2xl border border-indigo-200">
+    <h3 class="text-indigo-700 font-bold mb-3 text-center">🌙 กะดึก (20.00 - 08.00)</h3>
+    <div class="grid grid-cols-2 gap-3">
+        <button onclick="submitData('เข้างาน (กะดึก)')" class="bg-indigo-600 text-white p-4 rounded-xl font-bold shadow-md active:scale-95 transition">เข้างาน</button>
+        <button onclick="submitData('ออกงาน (กะดึก)')" class="bg-slate-700 text-white p-4 rounded-xl font-bold shadow-md active:scale-95 transition">ออกงาน</button>
+    </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-6">
+                  <button onclick="submitData('ลากิจ')" class="bg-amber-100 text-amber-700 p-3 rounded-xl font-semibold text-sm">ลากิจ</button>
+                 <button onclick="submitData('ลาป่วย')" class="bg-rose-100 text-rose-700 p-3 rounded-xl font-semibold text-sm">ลาป่วย</button>
+                  <button onclick="submitData('สลับวันหยุด')" class="bg-emerald-100 text-emerald-700 p-3 rounded-xl font-semibold text-sm">สลับวันหยุด</button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="submitData('ลากิจ/ป่วย')" class="bg-amber-100 text-amber-700 p-3 rounded-xl font-semibold">📝 แจ้งลา</button>
+                <button onclick="submitData('ออกก่อนเวลา')" class="bg-rose-100 text-rose-700 p-3 rounded-xl font-semibold">🏃 ออกก่อน</button>
+                <button onclick="submitData('สลับวันหยุด')" class="bg-emerald-100 text-emerald-700 p-3 rounded-xl font-semibold">🔄 สลับหยุด</button>
+            </div>
+
+            <div id="statusBoard" class="hidden bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 mb-4 text-center">
+                  <p class="text-blue-600 font-semibold">🕒 กำลังปฏิบัติงาน</p>
+                  <div id="timer" class="text-4xl font-bold text-blue-800 my-2">00:00:00</div>
+                 <p id="startTimeText" class="text-sm text-blue-500">เริ่มเมื่อ: --:--</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const API_URL = "URL_WEB_APP_ที่ได้จาก_APPS_SCRIPT";
+
+        // โหลดข้อมูลพนักงานและสถานที่ตอนเปิดหน้าเว็บ
+        window.onload = async () => {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            
+            document.getElementById('empList').innerHTML = data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
+            document.getElementById('locList').innerHTML = data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
+        };
+
+        async function submitData(type) {
+            const payload = {
+                name: document.getElementById('empList').value,
+                location: document.getElementById('locList').value,
+                type: type
+            };
+
+            if(!confirm(`ยืนยันบันทึก: ${type}?`)) return;
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            if(response.ok) alert("✅ บันทึกและส่ง Telegram เรียบร้อย!");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ระบบจัดการเวลา</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-blue-800 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Admin Dashboard 📊</h1>
+            <button onclick="location.href='index.html'" class="text-sm bg-blue-700 px-3 py-1 rounded">ไปหน้าบันทึกเวลา</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+        <div class="bg-white p-6 rounded-xl shadow-sm mb-6 flex flex-wrap gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">ค้นชื่อพนักงาน</label>
+                <input type="text" id="searchName" onkeyup="filterData()" placeholder="พิมพ์ชื่อ..." class="mt-1 p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">เลือกเดือน</label>
+                <input type="month" id="searchMonth" onchange="filterData()" class="mt-1 p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex-grow text-right">
+                <button onclick="fetchData()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">🔄 รีเฟรชข้อมูล</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-green-500">
+                <p class="text-sm text-gray-500">จำนวนรายการเดือนนี้</p>
+                <h3 id="totalRecords" class="text-2xl font-bold text-gray-800">0</h3>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
+                <p class="text-sm text-gray-500">พนักงานที่เข้างานวันนี้</p>
+                <h3 id="todayActive" class="text-2xl font-bold text-gray-800">0</h3>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="p-4 font-semibold text-gray-600 text-sm">วันที่-เวลา</th>
+                            <th class="p-4 font-semibold text-gray-600 text-sm">ชื่อพนักงาน</th>
+                            <th class="p-4 font-semibold text-gray-600 text-sm">สถานที่</th>
+                            <th class="p-4 font-semibold text-gray-600 text-sm">ประเภทการลงงาน</th>
+                            <th class="p-4 font-semibold text-gray-600 text-sm text-blue-600">ชั่วโมงทำงาน</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable" class="divide-y text-sm">
+                        </tbody>
+                </table>
+            </div>
+            <div id="loadingMsg" class="p-10 text-center text-gray-400">กำลังโหลดข้อมูลจาก Google Sheets...</div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = "URL_WEB_APP_ที่ได้จาก_APPS_SCRIPT"; // ใช้ URL ตัวเดียวกับ index.html
+        let allData = [];
+
+        async function fetchData() {
+            document.getElementById('loadingMsg').classList.remove('hidden');
+            try {
+                const response = await fetch(API_URL + "?action=getLogs");
+                const data = await response.json();
+                allData = data;
+                displayData(allData);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('loadingMsg').innerText = "❌ ไม่สามารถโหลดข้อมูลได้ ตรวจสอบการตั้งค่า API";
+            }
+        }
+
+        function displayData(data) {
+            const tableBody = document.getElementById('dataTable');
+            document.getElementById('loadingMsg').classList.add('hidden');
+            tableBody.innerHTML = "";
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition";
+                tr.innerHTML = `
+                    <td class="p-4">${new Date(row.timestamp).toLocaleString('th-TH')}</td>
+                    <td class="p-4 font-medium text-gray-900">${row.name}</td>
+                    <td class="p-4">${row.location}</td>
+                    <td class="p-4"><span class="px-2 py-1 rounded-full text-xs ${getTypeClass(row.type)}">${row.type}</span></td>
+                    <td class="p-4 text-blue-600 font-bold">${row.duration || '-'}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            document.getElementById('totalRecords').innerText = data.length;
+        }
+
+        function getTypeClass(type) {
+            if (type.includes('เข้างาน')) return 'bg-green-100 text-green-700';
+            if (type.includes('ออกงาน')) return 'bg-gray-100 text-gray-700';
+            if (type.includes('ลา')) return 'bg-red-100 text-red-700';
+            return 'bg-blue-100 text-blue-700';
+        }
+
+        function filterData() {
+            const nameSearch = document.getElementById('searchName').value.toLowerCase();
+            const monthSearch = document.getElementById('searchMonth').value; // YYYY-MM
+
+            const filtered = allData.filter(row => {
+                const date = new Date(row.timestamp);
+                const monthStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                const matchName = row.name.toLowerCase().includes(nameSearch);
+                const matchMonth = monthSearch === "" || monthStr === monthSearch;
+                
+                return matchName && matchMonth;
+            });
+            displayData(filtered);
+        }
+
+        window.onload = fetchData;
+    </script>
+</body>
+</html>
