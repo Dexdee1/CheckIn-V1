@@ -15,6 +15,7 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 <body class="bg-slate-900">
@@ -24,7 +25,7 @@
             <div class="text-center mb-8">
                 <div class="inline-block p-5 bg-slate-100 rounded-full mb-4 text-2xl">🔐</div>
                 <h3 class="text-4xl font-black text-slate-800 uppercase tracking-tighter">ระบบหลังบ้าน</h3>
-                <p class="text-slate-400 text-10 font-bold uppercase mt-1">เข้าได้สะผู้ดูแลเท่านั้น!!</p>
+                <p class="text-slate-400 text-[10px] font-bold uppercase mt-1 tracking-widest">เฉพาะผู้ดูแลเท่านั้น</p>
             </div>
             <div class="space-y-4">
                 <input type="text" id="uField" placeholder="Username" class="w-full p-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold transition-all">
@@ -36,50 +37,44 @@
     </div>
 
     <div id="dashboardSection" class="hidden-page bg-slate-50 min-h-screen p-4 md:p-8">
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-6xl mx-auto">
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 animate-fadeIn">
                 <div>
                     <h2 class="text-5xl font-black text-slate-800 italic uppercase leading-none">แดชบอร์ด</h2>
-                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] italic mt-2">ระบบบริหารจัดการการเข้า-ออกงาน</p>
+                    <p class="text-[12px] text-slate-400 font-black uppercase tracking-[0.2em] italic mt-2">แผงควบคุมการบริหาร</p>
                 </div>
                 <div class="flex gap-2 w-full md:w-auto">
-                    <button onclick="fetchHistory()" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-xs font-black shadow-lg shadow-blue-500/20 active:scale-95 transition-all uppercase italic">รีเฟรชข้อมูล</button>
-                    <button onclick="location.reload()" class="flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 px-6 py-3 rounded-2xl text-xs font-black active:scale-95 transition-all uppercase italic hover:bg-rose-50">ออกจากระบบ</button>
+                    <button onclick="fetchHistory()" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-16 font-black shadow-lg active:scale-95 transition-all uppercase italic">รีเฟรช</button>
+                    <button onclick="location.reload()" class="flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 px-6 py-3 rounded-2xl text-16 font-black active:scale-95 transition-all uppercase italic">ออก</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 animate-fadeIn">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                    <p class="text-[16px] font-black text-slate-400 uppercase italic">พนักงานทั้งหมด</p>
+                    <p class="text-[14px] font-black text-slate-400 uppercase italic">พนักงานทั้งหมด</p>
                     <p id="statCount" class="text-2xl font-black text-slate-800 italic uppercase">0 คน</p>
                 </div>
                 <div class="bg-emerald-500 p-6 rounded-[2rem] shadow-lg shadow-emerald-500/20">
-                    <p class="text-[16px] font-black text-emerald-100 uppercase italic">แจ้งเข้างานวันนี้</p>
-                    <p id="todayInCount" class="text-2xl font-black text-white italic">0 คน</p> 
-                </div>
-                <div class="bg-rose-500 p-6 rounded-[2rem] shadow-lg shadow-rose-500/20">
-                    <p class="text-[16px] font-black text-rose-100 uppercase italic">แจ้งออกงานวันนี้</p> 
-                    <p id="todayOutCount" class="text-2xl font-black text-white italic">0 คน</p> 
+                    <p class="text-[14px] font-black text-emerald-100 uppercase italic">บันทึกวันนี้</p>
+                    <p id="todayInCount" class="text-2xl font-black text-white italic">0 รายการ</p> 
                 </div>
                 <div class="bg-slate-800 p-6 rounded-[2rem] shadow-lg shadow-slate-800/20">
-                    <p class="text-[16px] font-black text-slate-400 uppercase italic">ฐานข้อมูลหลัก</p>
-                    <a href="https://docs.google.com/spreadsheets/d/1T9SGAGI4525KLN2_nywkN1TvvY9qkUNJYGk8L0s7Bkw/edit" target="_blank" class="text-white font-bold text-xs underline decoration-blue-500 underline-offset-4 hover:text-blue-400 transition-colors italic uppercase">Open Sheet ↗</a>
+                    <p class="text-[14px] font-black text-slate-400 uppercase italic">ฐานข้อมูล</p>
+                    <a href="https://docs.google.com/spreadsheets/d/1T9SGAGI4525KLN2_nywkN1TvvY9qkUNJYGk8L0s7Bkw/edit" target="_blank" class="text-white font-bold text-[10px] underline decoration-blue-500 underline-offset-4 hover:text-blue-400 transition-colors uppercase italic">View Sheet ↗</a>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm mb-8 animate-fadeIn">
-                <h4 class="text-[12px] font-black text-blue-500 uppercase italic mb-3 tracking-widest flex items-center gap-2">
+                <h4 class="text-[14px] font-black text-blue-500 uppercase italic mb-3 tracking-widest flex items-center gap-2">
                     <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                    ค้นหารายงานรายบุคคล
+                    เรียกรายงานรายบุคคล
                 </h4>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <select id="adminEmpFilter" class="flex-1 p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 shadow-inner">
                         <option value="">-- โหลดรายชื่อ... --</option>
                     </select>
-                    <button onclick="searchUserHistory()" class="bg-slate-800 text-white px-8 py-4 rounded-2xl font-black hover:bg-black transition-all active:scale-95 uppercase italic tracking-widest text-sm">
-                        รับรายงาน
-                    </button>
+                    <button id="searchBtn" onclick="searchUserHistory()" class="bg-slate-800 text-white px-8 py-4 rounded-3xl font-black hover:bg-black transition-all active:scale-95 uppercase italic text-18">ค้นหาข้อมูล</button>
                 </div>
             </div>
 
@@ -88,17 +83,18 @@
                     <div class="p-6 bg-slate-50 flex justify-between items-center border-b border-slate-100">
                         <div>
                             <h3 id="searchTitle" class="font-black italic uppercase text-blue-600 text-lg">Report: -</h3>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Work History Details</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Work History Summary</p>
                         </div>
-                        <button onclick="document.getElementById('searchResultSection').classList.add('hidden-page')" class="text-[10px] font-black bg-rose-100 text-rose-600 px-4 py-2 rounded-xl uppercase hover:bg-rose-200 transition-colors">Close X</button>
+                        <button onclick="document.getElementById('searchResultSection').classList.add('hidden-page')" class="text-[10px] font-black bg-rose-100 text-rose-600 px-4 py-2 rounded-xl uppercase hover:bg-rose-200">CLOSE X</button>
                     </div>
                     <div class="table-container">
-                        <table class="w-full text-left">
+                        <table class="w-full text-left min-w-[700px]">
                             <thead>
-                                <tr class="bg-slate-50">
-                                    <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">วันที่/เวลา</th>
+                                <tr class="bg-slate-50/50">
+                                    <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">วัน/เวลา</th>
                                     <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">สถานที่</th>
-                                    <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">สถานะ</th>
+                                    <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">กะทำงาน</th>
+                                    <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">ประเภท</th>
                                     <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">หมายเหตุ</th>
                                 </tr>
                             </thead>
@@ -108,25 +104,26 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden animate-fadeIn">
+            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden animate-fadeIn mb-12">
                 <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="font-black text-slate-700 italic uppercase text-sm flex items-center gap-2">
+                    <h3 class="font-black text-slate-700 italic uppercase text-[14px] flex items-center gap-2 tracking-widest">
                         <span class="w-1.5 h-4 bg-slate-400 rounded-full"></span>
                         กิจกรรมล่าสุด (5 รายการล่าสุด)
                     </h3>
                 </div>
                 <div class="table-container">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left min-w-[800px]">
                         <thead>
-                            <tr class="bg-slate-50">
-                                <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">เวลา</th>
-                                <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">ชื่อพนักงาน</th>
-                                <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">ประเภท</th>
-                                <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">หมายเหตุ</th>
+                            <tr class="bg-slate-50/80">
+                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic">เวลา</th>
+                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic">ชื่อพนักงาน</th>
+                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic text-center">กะทำงาน</th>
+                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic text-center">เข้า-ออก/ลา</th>
+                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic">หมายเหตุ</th>
                             </tr>
                         </thead>
                         <tbody id="historyTableBody" class="text-sm font-medium text-slate-600">
-                            <tr><td colspan="4" class="p-10 text-center text-slate-300 italic uppercase font-black text-[10px]">Loading history...</td></tr>
+                            <tr><td colspan="5" class="p-10 text-center text-slate-300 italic uppercase font-black text-[14px]">กำลังดาวโหลดข้อมูลค่ะ</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -136,21 +133,19 @@
     </div>
 
     <script>
-        // รหัสผ่านที่นายต้องการ (แก้ตรงนี้ได้เลย)
         const MY_CRED = { u: "Admin", p: "Dexdee123" };
         const API_URL = "https://script.google.com/macros/s/AKfycbyEqPzr-R_4p8_evzSiaVSisROSm-mPgp0MR8TZpxwCnL5NnjaHCKlcFV0EobPWbdD4/exec";
 
         function checkAdminLogin() {
             const userVal = document.getElementById('uField').value.trim();
             const passVal = document.getElementById('pField').value.trim();
-
             if (userVal.toLowerCase() === MY_CRED.u.toLowerCase() && passVal === MY_CRED.p) {
                 document.getElementById('loginSection').classList.add('hidden-page');
                 document.getElementById('dashboardSection').classList.remove('hidden-page');
                 document.body.className = "bg-slate-50";
                 fetchHistory(); 
             } else {
-                alert("❌ รหัสผ่านไม่ถูกต้อง นายลองใหม่อีกทีนะ!");
+                alert("❌ รหัสผ่านไม่ถูกต้อง");
             }
         }
 
@@ -159,85 +154,97 @@
             const filterSelect = document.getElementById('adminEmpFilter');
             
             try {
-                const res = await fetch(API_URL + "?action=getData");
+                const res = await fetch(`${API_URL}?action=getData&t=${new Date().getTime()}`);
                 const data = await res.json();
                 
-                // อัปเดตสถิติ
                 document.getElementById('statCount').innerText = `${data.employees.length} คน`;
-                document.getElementById('todayInCount').innerText = data.summary ? data.summary.in : 0 ;
-                document.getElementById('todayOutCount').innerText = data.summary ? data.summary.out : 0;
+                // แสดงจำนวนรายการล่าสุดแทน (หรือปรับตามโครงสร้าง data.summary ถ้ามี)
+                document.getElementById('todayInCount').innerText = `${data.recentActivity.length} รายการล่าสุด`;
 
-                // อัปเดต Dropdown รายชื่อ
                 filterSelect.innerHTML = '<option value="">-- เลือกชื่อพนักงาน --</option>' + 
                     data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
 
-                // อัปเดตตารางล่าสุด
                 if(data.recentActivity) renderTable(data.recentActivity);
                 
             } catch (err) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-rose-400 font-bold uppercase">เชื่อมต่อข้อมูลล้มเหลว</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-rose-400 font-bold uppercase">Error connecting to database</td></tr>';
             }
         }
 
         function renderTable(history) {
             const tableBody = document.getElementById('historyTableBody');
             if (!history || history.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-300 italic uppercase font-black text-[10px]">No records found</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-slate-300 italic font-black text-[14px]">ยังไม่มีข้อมูลบันทึกค่ะ</td></tr>';
                 return;
             }
-            tableBody.innerHTML = history.map(row => `
-                <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                    <td class="p-4 text-[10px] font-mono text-slate-400 italic uppercase">${row.time}</td>
-                    <td class="p-4 font-black text-slate-700 italic uppercase text-[11px]">${row.name}</td>
+            tableBody.innerHTML = history.map(row => {
+                const typeStyle = row.type.includes('เข้างาน') ? 'bg-emerald-100 text-emerald-600' : 
+                                 row.type.includes('ออกงาน') ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600';
+                
+                return `
+                <tr class="border-b border-slate-50 hover:bg-slate-50/80 transition-colors">
                     <td class="p-4">
-                        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase italic ${row.type.includes('เข้างาน') ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
-                            ${row.type}
-                        </span>
+                        <div class="text-[10px] font-black text-slate-400 italic">${row.time}</div>
                     </td>
-                    <td class="p-4 text-[10px] text-slate-400 italic font-bold uppercase">${row.note || '-'}</td>
-                </tr>
-            `).join('');
+                    <td class="p-4 font-black text-slate-800 italic uppercase text-[11px] tracking-tighter">${row.name}</td>
+                    <td class="p-4 text-center">
+                        <span class="px-3 py-1 rounded-full text-[9px] font-black bg-slate-100 text-slate-500 border border-slate-200 italic uppercase">${row.shift || '-'}</span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase italic ${typeStyle}">${row.type}</span>
+                    </td>
+                    <td class="p-4">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase leading-tight max-w-[200px] truncate-2 italic">${row.note || '-'}</p>
+                    </td>
+                </tr>`;
+            }).join('');
         }
 
         async function searchUserHistory() {
             const name = document.getElementById('adminEmpFilter').value;
+            const btn = document.getElementById('searchBtn');
             if (!name) return alert("⚠️ โปรดเลือกชื่อพนักงานก่อนค้นหา");
 
             const searchSection = document.getElementById('searchResultSection');
             const searchBody = document.getElementById('searchTableBody');
             const searchTitle = document.getElementById('searchTitle');
 
+            // เริ่มการโหลด
+            btn.disabled = true;
+            btn.innerText = "กำลังค้นหา...";
             searchSection.classList.remove('hidden-page');
-            searchBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-400 animate-pulse font-black uppercase text-xs italic">Searching Records...</td></tr>';
+            searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-blue-400 animate-pulse font-black uppercase text-xs italic">กำลังดึงข้อมูลจาก Server...</td></tr>';
             searchTitle.innerText = `Report: ${name}`;
 
             try {
-                const res = await fetch(`${API_URL}?action=getUserHistory&name=${encodeURIComponent(name)}`);
+                const res = await fetch(`${API_URL}?action=getUserHistory&name=${encodeURIComponent(name)}&t=${new Date().getTime()}`);
                 const data = await res.json();
                 
                 if (!data.history || data.history.length === 0) {
-                    searchBody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-300 uppercase font-black italic text-xs">ไม่พบประวัติของพนักงานท่านนี้</td></tr>';
-                    return;
+                    searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-slate-300 uppercase font-black italic text-xs">ไม่พบประวัติการทำงานของพนักงานคนนี้</td></tr>';
+                } else {
+                    searchBody.innerHTML = data.history.map(row => {
+                        const typeStyle = row.type.includes('เข้างาน') ? 'text-emerald-500 bg-emerald-50' : 
+                                         row.type.includes('ออกงาน') ? 'text-rose-500 bg-rose-50' : 'text-blue-500 bg-blue-50';
+                        return `
+                        <tr class="border-b border-slate-50 hover:bg-blue-50/30 transition-colors">
+                            <td class="p-4 text-[10px] font-black text-slate-500 italic">${row.time}</td>
+                            <td class="p-4 text-[10px] font-black text-slate-600 uppercase italic">${row.location || '-'}</td>
+                            <td class="p-4 text-[10px] font-black text-slate-500 italic uppercase">${row.shift || '-'}</td>
+                            <td class="p-4">
+                                <span class="font-black uppercase text-[9px] px-2 py-1 rounded-lg italic ${typeStyle}">${row.type}</span>
+                            </td>
+                            <td class="p-4 text-[10px] text-slate-400 italic font-bold uppercase truncate-2">${row.note || '-'}</td>
+                        </tr>`;
+                    }).join('');
                 }
-
-                searchBody.innerHTML = data.history.map(row => `
-                    <tr class="border-b border-slate-50 hover:bg-blue-50/30 transition-colors">
-                        <td class="p-4">
-                            <div class="text-[10px] font-mono text-slate-500 font-bold">${row.time}</div>
-                        </td>
-                        <td class="p-4 text-[10px] font-black text-slate-600 uppercase italic">${row.location}</td>
-                        <td class="p-4">
-                            <span class="font-black uppercase text-[10px] italic ${row.type.includes('เข้างาน') ? 'text-emerald-500' : 'text-rose-500'}">
-                                ${row.type}
-                            </span>
-                        </td>
-                        <td class="p-4 text-[10px] text-slate-400 italic font-bold uppercase">${row.note || '-'}</td>
-                    </tr>
-                `).join('');
-                
                 searchSection.scrollIntoView({ behavior: 'smooth' });
             } catch (err) {
-                alert("❌ เกิดข้อผิดพลาดในการดึงข้อมูลส่วนบุคคล");
+                console.error(err);
+                searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-rose-500 font-black italic">❌ การเชื่อมต่อล้มเหลว ตรวจสอบ Apps Script</td></tr>';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "ค้นหาข้อมูล";
             }
         }
 

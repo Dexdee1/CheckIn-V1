@@ -5,46 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <title>บันทึกเวลาทำงาน (Strict Version)</title>
+    <title>Work Smart (Smart Leave)</title>
     <style>
-        body { font-family: 'Noto Sans Thai', sans-serif; background-color: #f8fafc; font-size: 14px; color: #334155; }
-        .animate-fadeIn { animation: fadeIn 0.2s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .shift-active { border: 2.5px solid #3b82f6 !important; background-color: #eff6ff !important; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .btn-inactive { opacity: 0.3; filter: grayscale(0.8); pointer-events: none; transform: scale(0.95); }
-        select, input, textarea, button { font-size: 14px !important; }
-        /* ตกแต่ง Scrollbar สำหรับกฎระเบียบ */
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        body { font-family: 'Noto Sans Thai', sans-serif; background-color: #f1f5f9; font-size: 14px; color: #334155; }
+        .glass-popup { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        .pop-in { animation: springIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .pop-out { animation: springOut 0.3s ease forwards; }
+        @keyframes springIn { from { opacity: 0; transform: scale(0.8) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes springOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.9) translateY(-10px); } }
+        .shift-active { border: 3px solid #3b82f6 !important; background-color: #ffffff !important; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        input[type="date"] { -webkit-appearance: none; min-height: 50px; }
+        .date-tag { background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 99px; font-weight: 700; font-size: 11px; display: flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body class="antialiased">
     <div class="max-w-md mx-auto min-h-screen flex flex-col p-5">
         
-        <div class="flex flex-col items-center mb-6 px-2 space-y-3">
-            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tighter">ระบบเข้า - ออกงาน</h1>
+        <div class="flex flex-col items-center mb-6 space-y-3">
+            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tighter italic">WORK <span class="text-blue-600">SMART</span></h1>
             <div class="flex gap-2 w-full justify-center">
-                <button onclick="showRules()" class="flex-1 max-w-[120px] font-black bg-white text-slate-500 py-2 rounded-full uppercase border border-slate-200 shadow-sm text-[12px] active:scale-95 transition-all">
-                    กฎระเบียบ
-                </button>
-                <button onclick="location.href='admin.html'" class="flex-1 max-w-[120px] font-black bg-yellow-300 text-black py-2 rounded-full uppercase border border-yellow-400 shadow-sm text-[12px] active:scale-95 transition-all">
-                    แอดมิน
-                </button>
+                <button onclick="showRulePopup()" class="flex-1 max-w-[120px] font-black bg-white text-slate-500 py-2.5 rounded-full uppercase border border-slate-200 shadow-sm text-[11px] italic">กฎระเบียบ</button>
+                <button onclick="location.href='admin.html'" class="flex-1 max-w-[120px] font-black bg-yellow-300 text-black py-2.5 rounded-full uppercase border border-yellow-400 shadow-sm text-[11px] italic">แอดมิน</button>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 mb-6 space-y-5">
+        <div class="bg-white/80 backdrop-blur-md p-6 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-white mb-6 space-y-5">
             <div>
-                <label class="font-black text-slate-400 uppercase tracking-widest ml-2 italic text-[12px]">พนักงาน</label>
-                <select id="empList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 focus:ring-2 focus:ring-blue-500 shadow-inner">
-                    <option value="">-- กำลังโหลดรายชื่อ --</option>
+                <label class="font-black text-slate-400 uppercase tracking-widest ml-4 text-[10px]">พนักงาน</label>
+                <select id="empList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner italic">
+                    <option value="">-- กำลังดาวโหลดข้อมูลค่ะ --</option>
                 </select>
             </div>
             <div>
-                <label class="font-black text-slate-400 uppercase tracking-widest ml-2 italic text-[12px]">สถานที่</label>
-                <select id="locList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 focus:ring-2 focus:ring-blue-500 shadow-inner">
-                    <option value="">-- เลือกสถานที่ --</option>
+                <label class="font-black text-slate-400 uppercase tracking-widest ml-4 text-[10px]">เว็บที่ทำงาน</label>
+                <select id="locList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner italic">
+                    <option value="">-- เลือกเว็บที่ทำงาน --</option>
                 </select>
             </div>
         </div>
@@ -52,280 +48,253 @@
         <main class="space-y-8">
             <section class="space-y-4">
                 <div class="flex items-center gap-2 px-2">
-                    <div class="w-1.5 h-5 bg-orange-500 rounded-full"></div>
-                    <h2 class="font-black text-slate-700 italic uppercase text-base">เลือกระบบกะ 12 ชม.</h2>
+                    <div class="w-2 h-5 bg-orange-500 rounded-full"></div>
+                    <h2 class="font-black text-slate-700 italic uppercase text-sm">ระบบกะ 12 ชม.</h2>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="selectShift(this, 'กะเช้า')" class="shift-btn bg-yellow-300 p-5 rounded-[1.8rem] shadow-sm border-2 border-transparent text-black font-bold transition-all text-center">
-                        <span class="block  text-lg">☀️ กะเช้า</span>
-                        <span class="text-black  uppercase font-black text-[15px]">08:00 - 20:00</span>
+                    <button id="shiftMorning" onclick="selectShift(this, 'กะเช้า')" class="shift-btn bg-white p-5 rounded-[2rem] shadow-sm border-2 border-transparent font-bold transition-all text-center">
+                        <span class="block text-2xl mb-1">☀️</span>
+                        <span class="block text-lg italic font-black">กะเช้า</span>
                     </button>
-                    <button onclick="selectShift(this, 'กะดึก')" class="shift-btn  bg-blue-400 p-5 rounded-[1.8rem] shadow-sm border-2 border-transparent text-blue-800 font-bold transition-all text-center">
-                        <span class="block text-lg">🌙 กะดึก</span>
-                        <span class="text-blue-800  uppercase font-black text-[15px]">20:00 - 08:00</span>
+                    <button id="shiftNight" onclick="selectShift(this, 'กะดึก')" class="shift-btn bg-white p-5 rounded-[2rem] shadow-sm border-2 border-transparent font-bold transition-all text-center">
+                        <span class="block text-2xl mb-1">🌙</span>
+                        <span class="block text-lg italic font-black">กะดึก</span>
                     </button>
                 </div>
-                
-                <div class="grid grid-cols-2  gap-4 pt-2">
-                    <button id="btnIn" onclick="handleAction('เข้างาน')" class="bg-[#10b981]  text-white py-5 rounded-[2rem] font-black shadow-lg active:scale-95 transition-all   text-lg uppercase">เข้างาน</button>
-                    <button id="btnOut" onclick="handleAction('ออกงาน')" class="bg-[#f43f5e] text-white py-5 rounded-[2rem] font-black shadow-lg active:scale-95 transition-all  text-lg uppercase">ออกงาน</button>
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button onclick="handleAction('เข้างาน')" class="bg-emerald-500 text-white py-5 rounded-[2.2rem] font-black shadow-lg shadow-emerald-200 active:scale-95 transition-all text-lg italic uppercase">เข้างาน</button>
+                    <button onclick="handleAction('ออกงาน')" class="bg-rose-500 text-white py-5 rounded-[2.2rem] font-black shadow-lg shadow-rose-200 active:scale-95 transition-all text-lg italic uppercase">ออกงาน</button>
                 </div>
             </section>
 
-            <section class="space-y-4">
+            <section class="space-y-4 pb-10">
                 <div class="flex items-center gap-2 px-2">
-                    <div class="w-1.5 h-5 bg-rose-500 rounded-full"></div>
-                    <h2 class="font-black text-slate-700 italic uppercase text-base">การลางาน & อื่นๆ</h2>
+                    <div class="w-2 h-5 bg-blue-500 rounded-full"></div>
+                    <h2 class="font-black text-slate-700 italic uppercase text-sm">การลางาน & อื่นๆ</h2>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="openLeaveModal('ลากิจ')" class="bg-white py-4 rounded-2xl shadow-sm text-amber-600 font-black border border-slate-50">📝 ลากิจ</button>
-                    <button onclick="openLeaveModal('ลาป่วย')" class="bg-white py-4 rounded-2xl shadow-sm text-rose-600 font-black border border-slate-50">🤒 ลาป่วย</button>
-                    <button onclick="openLeaveModal('สลับหยุด')" class="bg-white py-4 rounded-2xl shadow-sm text-emerald-600 font-black border border-slate-50">🔄 สลับหยุด</button>
-                    <button onclick="openLeaveModal('ออกก่อนเวลา')" class="bg-white py-4 rounded-2xl shadow-sm text-blue-600 font-black border border-slate-50">🏃 ออกก่อน</button>
-                </div>
-            </section>
-
-            <section id="recentSection" class="space-y-4 pb-12">
-                <div class="flex items-center gap-2 px-2">
-                    <div class="w-1.5 h-5 bg-slate-400 rounded-full"></div>
-                    <h2 class="font-black text-slate-700 italic uppercase text-base">กิจกรรมล่าสุด (5 รายการล่าสุด)</h2>
-                </div>
-                <div id="activityContainer" class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-100 p-4">
-                    <div class="text-center text-slate-400 font-bold italic">กำลังโหลดข้อมูล...</div>
+                    <button onclick="handleLeave(this, 'ลากิจ')" class="bg-white py-4 rounded-2xl shadow-sm text-amber-600 font-black border border-white italic text-[13px]">📝 ลากิจ</button>
+                    <button onclick="handleLeave(this, 'ลาป่วย')" class="bg-white py-4 rounded-2xl shadow-sm text-rose-600 font-black border border-white italic text-[13px]">🤒 ลาป่วย</button>
+                    <button onclick="handleLeave(this, 'สลับหยุด')" class="bg-white py-4 rounded-2xl shadow-sm text-emerald-600 font-black border border-white italic text-[13px]">🔄 สลับหยุด</button>
+                    <button onclick="handleLeave(this, 'ออกก่อนเวลา')" class="bg-white py-4 rounded-2xl shadow-sm text-blue-600 font-black border border-white italic text-[13px]">🏃 ออกก่อน</button>
                 </div>
             </section>
         </main>
     </div>
 
-    <div id="customAlert" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fadeIn">
-        <div class="bg-white w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl text-center border border-slate-100">
-            <div id="alertIcon" class="text-5xl mb-4">❌</div>
-            <h3 class="font-black text-slate-800 uppercase text-lg mb-2 italic">แจ้งเตือนระบบ</h3>
-            <div id="alertMsg" class="font-bold text-slate-500 mb-8 leading-relaxed"></div>
-            <button onclick="closePopup()" class="w-full bg-slate-800 hover:bg-black text-white py-4 rounded-2xl font-black uppercase shadow-lg transition-all active:scale-95 italic text-center">ตกลง</button>
+    <div id="leaveModal" class="fixed inset-0 z-[1100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl pop-in max-h-[90vh] overflow-y-auto">
+            <h3 id="leaveModalTitle" class="text-2xl font-black text-slate-800 italic uppercase mb-4 underline decoration-blue-500">แจ้งลางาน</h3>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label id="date1Label" class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest">วันที่ต้องการลา</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="date" id="dateInput1" class="flex-1 p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 shadow-inner">
+                        <button onclick="addDateToList(1)" class="bg-blue-600 text-white px-4 rounded-2xl font-black text-xl active:scale-90">+</button>
+                    </div>
+                    <div id="dateListDisplay1" class="flex flex-wrap gap-2 mt-3"></div>
+                </div>
+
+                <div id="date2Area" class="hidden">
+                    <label class="font-black text-blue-500 text-[10px] uppercase ml-2 tracking-widest">จะมาทำงานแทนในวันที่</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="date" id="dateInput2" class="flex-1 p-4 bg-blue-50 rounded-2xl border-2 border-blue-100 outline-none font-bold text-slate-700">
+                        <button onclick="addDateToList(2)" class="bg-blue-600 text-white px-4 rounded-2xl font-black text-xl active:scale-90">+</button>
+                    </div>
+                    <div id="dateListDisplay2" class="flex flex-wrap gap-2 mt-3"></div>
+                </div>
+
+                <div>
+                    <label class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest">หมายเหตุ</label>
+                    <textarea id="leaveNote" rows="2" placeholder="ระบุเพิ่มเติม..." class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner"></textarea>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-8">
+                <button onclick="closeLeaveModal()" class="flex-1 bg-slate-100 text-slate-500 py-4 rounded-2xl font-black uppercase italic">ยกเลิก</button>
+                <button onclick="confirmLeaveSubmit()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black uppercase italic shadow-lg shadow-blue-200">ส่งข้อมูล</button>
+            </div>
         </div>
     </div>
 
-    <div id="leaveModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md animate-fadeIn">
-        <div class="bg-white w-full max-w-sm rounded-[3rem] p-8 shadow-2xl border border-slate-100">
-            <h3 id="leaveTitle" class="font-black text-slate-800 uppercase text-xl mb-4 italic text-center">ระบุรายละเอียด</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="font-black text-slate-400 uppercase text-[10px] ml-2 italic">เลือกวันที่ (เพิ่มได้หลายวัน)</label>
-                    <input type="date" id="leaveDateInput" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 focus:ring-2 focus:ring-blue-500 shadow-inner">
-                    <div id="dateBadgeContainer" class="flex flex-wrap gap-2 mt-3"></div>
-                </div>
-                <div>
-                    <label class="font-black text-slate-400 uppercase text-[10px] ml-2 italic">เหตุผล / หมายเหตุ</label>
-                    <textarea id="leaveNote" rows="3" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 focus:ring-2 focus:ring-blue-500 shadow-inner" placeholder="ระบุเหตุผล..."></textarea>
-                </div>
+    <div id="appToast" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-[3px]">
+        <div id="toastContent" class="glass-popup w-full max-w-[320px] rounded-[3rem] p-10 shadow-2xl text-center">
+            <div id="toastIcon" class="text-7xl mb-6 drop-shadow-md">✅</div>
+            <h3 id="toastTitle" class="font-black text-slate-800 uppercase text-xl mb-2 italic">สำเร็จ!</h3>
+            <p id="toastMsg" class="font-bold text-slate-500 leading-relaxed text-base"></p>
+            <div id="toastBar" class="w-full bg-slate-100 h-1.5 mt-8 rounded-full overflow-hidden">
+                <div id="toastProgress" class="bg-blue-500 h-full w-0 transition-all duration-[2000ms] ease-linear"></div>
             </div>
-            <div class="grid grid-cols-2 gap-3 mt-8">
-                <button onclick="closeLeaveModal()" class="bg-slate-200 text-slate-600 py-4 rounded-2xl font-black uppercase shadow-sm active:scale-95 italic">ยกเลิก</button>
-                <button onclick="submitLeave()" class="bg-blue-600 text-white py-4 rounded-2xl font-black uppercase shadow-lg active:scale-95 italic">ยืนยันการส่ง</button>
-            </div>
+            <button id="toastCloseBtn" onclick="closeToast()" class="hidden w-full bg-slate-800 text-white py-4 rounded-2xl font-black uppercase italic mt-6">ปิด</button>
         </div>
     </div>
 
     <script>
-        // แก้ไขลิงก์ API ของนายที่นี่
         const API_URL = "https://script.google.com/macros/s/AKfycbyEqPzr-R_4p8_evzSiaVSisROSm-mPgp0MR8TZpxwCnL5NnjaHCKlcFV0EobPWbdD4/exec";
-        
+        const COOLDOWN_MINUTES = 5; 
         let selectedShiftName = "";
-        let selectedDates = [];
+        let isProcessing = false;
         let currentLeaveType = "";
+        let datesSet1 = [];
+        let datesSet2 = [];
 
         window.onload = () => fetchInitialData();
 
-        // --- ระบบ Popup ---
-        function showPopup(msgHTML, isSuccess = false) {
-            const modal = document.getElementById('customAlert');
-            document.getElementById('alertMsg').innerHTML = msgHTML;
-            document.getElementById('alertIcon').innerText = isSuccess ? "✅" : "❌";
-            modal.classList.remove('hidden');
+        // --- 🛡️ วินัยเหล็ก: เช็คเวลาเข้า-ออก ---
+        function checkShiftWindow(action) {
+            const now = new Date();
+            const time = now.getHours() + (now.getMinutes() / 60);
+            
+            let start, end;
+            if (selectedShiftName === "กะเช้า") {
+                if (action === "เข้างาน") { start = 7; end = 9; }
+                else { start = 19; end = 21; }
+            } else if (selectedShiftName === "กะดึก") {
+                if (action === "เข้างาน") { start = 19; end = 21; }
+                else { start = 7; end = 9; }
+            } else return "NO_SHIFT";
+
+            if (time < start) return "BEFORE";
+            if (time > end) return "AFTER";
+            return "OK";
         }
 
-        function closePopup() {
-            document.getElementById('customAlert').classList.add('hidden');
+        async function handleAction(type) {
+            if (isProcessing) return;
+            const name = document.getElementById('empList').value;
+            const loc = document.getElementById('locList').value;
+
+            if (!name || !loc || !selectedShiftName) return showModernToast("ข้อมูลไม่ครบ", "เลือกชื่อ เว็บ และกะก่อนค่ะ", "⚠️", false);
+            
+            const status = checkShiftWindow(type);
+            if (status === "BEFORE") return showModernToast("ยังไม่ถึงเวลา", `ยังไม่ถึงเวลาแจ้ง ${type} ค่ะ`, "⏳", false);
+            if (status === "AFTER") return showModernToast("เกินเวลา", `เกินเวลาแจ้ง ${type} ที่กำหนดแล้วค่ะ`, "❌", false);
+
+            const lastTime = localStorage.getItem(`last_${name}`);
+            if (lastTime) {
+                const diff = (new Date() - new Date(lastTime)) / 60000;
+                if (diff < COOLDOWN_MINUTES) return showModernToast("บันทึกซ้ำ!", `รออีก ${Math.ceil(COOLDOWN_MINUTES - diff)} นาที`, "⏳", false);
+            }
+
+            const timeData = getSmartTimeNote(type, selectedShiftName);
+            executeSubmit(name, loc, type, selectedShiftName, timeData.note, true);
         }
 
-        // --- ระบบดึงกฎระเบียบจาก Sheet ---
-        async function showRules() {
-            showPopup("⏳ กำลังโหลดกฎล่าสุด...", true);
+        // --- 🗓️ ระบบลางาน Multi-Date ---
+        function handleLeave(btn, type) {
+            if (isProcessing) return;
+            const name = document.getElementById('empList').value;
+            if (!name) return showModernToast("ข้อมูลไม่ครบ", "เลือกชื่อพนักงานก่อนค่ะ", "⚠️", false);
+            
+            currentLeaveType = type;
+            datesSet1 = []; datesSet2 = [];
+            renderDateTags();
+            
+            document.getElementById('leaveModalTitle').innerText = "รายการ: " + type;
+            document.getElementById('date1Label').innerText = (type === 'สลับหยุด') ? "วันที่หยุดงาน" : "วันที่ต้องการลา";
+            document.getElementById('date2Area').className = (type === 'สลับหยุด') ? "block" : "hidden";
+            document.getElementById('leaveModal').classList.remove('hidden');
+        }
+
+        function addDateToList(num) {
+            const input = document.getElementById(`dateInput${num}`);
+            if (!input.value) return;
+            const target = (num === 1) ? datesSet1 : datesSet2;
+            if (!target.includes(input.value)) {
+                target.push(input.value);
+                target.sort();
+                renderDateTags();
+            }
+            input.value = "";
+        }
+
+        function removeDate(num, val) {
+            if (num === 1) datesSet1 = datesSet1.filter(d => d !== val);
+            else datesSet2 = datesSet2.filter(d => d !== val);
+            renderDateTags();
+        }
+
+        function renderDateTags() {
+            document.getElementById('dateListDisplay1').innerHTML = datesSet1.map(d => `<span class="date-tag">${d} <button onclick="removeDate(1,'${d}')" class="text-rose-500">×</button></span>`).join('');
+            document.getElementById('dateListDisplay2').innerHTML = datesSet2.map(d => `<span class="date-tag bg-blue-100 text-blue-700">${d} <button onclick="removeDate(2,'${d}')" class="text-rose-500">×</button></span>`).join('');
+        }
+
+        async function confirmLeaveSubmit() {
+            if (datesSet1.length === 0) return alert("กรุณาเลือกวันที่ก่อนกดส่งค่ะ (กดปุ่ม + เพื่อเพิ่ม)");
+            if (currentLeaveType === 'สลับหยุด' && datesSet2.length === 0) return alert("กรุณาระบุวันที่จะมาทำงานแทนค่ะ");
+
+            let note = `[${currentLeaveType}] วันที่: ${datesSet1.join(', ')}`;
+            if (currentLeaveType === 'สลับหยุด') note += ` | แทนวันที่: ${datesSet2.join(', ')}`;
+            const extra = document.getElementById('leaveNote').value;
+            if (extra) note += ` (หมายเหตุ: ${extra})`;
+
+            closeLeaveModal();
+            executeSubmit(document.getElementById('empList').value, document.getElementById('locList').value, currentLeaveType, "-", note, false);
+        }
+
+        // --- Core Functions ---
+        async function executeSubmit(name, loc, type, shift, note, saveCool) {
             try {
-                const res = await fetch(`${API_URL}?action=getRules`);
-                const rules = await res.json();
-                
-                if (!rules || rules.length === 0) {
-                    showPopup("⚠️ ยังไม่ได้ตั้งค่ากฎระเบียบใน Sheet");
-                    return;
+                isProcessing = true;
+                document.body.style.opacity = "0.6";
+                const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ name, location: loc, type, shift, note }) });
+                const data = await res.json();
+                if(data.status === "success") {
+                    if (saveCool) localStorage.setItem(`last_${name}`, new Date().toISOString());
+                    showModernToast("สำเร็จ!", `${type}<br>${note}`, "✅", true);
                 }
-
-                let rulesHTML = `<div class="text-left space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-scroll">`;
-                rules.forEach(item => {
-                    rulesHTML += `
-                        <div class="bg-slate-50 p-3 rounded-xl border-l-4 border-blue-500 shadow-sm">
-                            <p class="font-black text-blue-600 text-[12px] uppercase italic">${item.title}</p>
-                            <p class="text-slate-600 text-[11px] font-bold mt-1">${item.detail}</p>
-                        </div>`;
-                });
-                rulesHTML += `</div>`;
-                showPopup(rulesHTML, true);
-            } catch (err) {
-                showPopup("❌ ไม่สามารถดึงข้อมูลกฎได้");
+            } catch (e) {
+                showModernToast("Error", "ลองใหม่ค่ะ", "📡", false);
+                isProcessing = false;
+                document.body.style.opacity = "1";
             }
         }
 
-        // --- ระบบดึงรายชื่อ/สถานที่ ---
+        function getSmartTimeNote(type, shift) {
+            const now = new Date();
+            const cur = (now.getHours() * 60) + now.getMinutes();
+            let target = (type === 'เข้างาน') ? (shift === 'กะเช้า' ? 480 : 1200) : (shift === 'กะเช้า' ? 1200 : 480);
+            let diff = cur - target;
+            if (diff > 720) diff -= 1440; if (diff < -720) diff += 1440;
+            return { note: `${type} ${diff > 0 ? 'ช้า' : 'ก่อน'} ${Math.abs(diff)} นาที` };
+        }
+
         async function fetchInitialData() {
             try {
                 const res = await fetch(API_URL + "?action=getData");
                 const data = await res.json();
                 document.getElementById('empList').innerHTML = '<option value="">-- เลือกพนักงาน --</option>' + data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
-                document.getElementById('locList').innerHTML = '<option value="">-- เลือกสถานที่ --</option>' + data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
-                renderActivity(data.recentActivity || []);
-            } catch (e) { 
-                showPopup("เกิดข้อผิดพลาดในการเชื่อมต่อข้อมูล");
+                document.getElementById('locList').innerHTML = '<option value="">-- เลือกเว็บที่ทำงาน --</option>' + data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
+            } catch (e) { document.getElementById('empList').innerHTML = '<option value="">❌ โหลดไม่สำเร็จ</option>'; }
+        }
+
+        function showModernToast(title, msg, icon, auto) {
+            const t = document.getElementById('appToast');
+            document.getElementById('toastIcon').innerText = icon;
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMsg').innerHTML = msg;
+            t.classList.remove('hidden');
+            if (auto) {
+                setTimeout(() => document.getElementById('toastProgress').style.width = '100%', 50);
+                setTimeout(() => location.reload(), 2200);
+            } else {
+                document.getElementById('toastBar').classList.add('hidden');
+                document.getElementById('toastCloseBtn').classList.remove('hidden');
             }
         }
 
+        function closeToast() { document.getElementById('appToast').classList.add('hidden'); }
+        function closeLeaveModal() { document.getElementById('leaveModal').classList.add('hidden'); }
         function selectShift(btn, name) {
             document.querySelectorAll('.shift-btn').forEach(b => b.classList.remove('shift-active'));
             btn.classList.add('shift-active');
             selectedShiftName = name;
         }
 
-        // --- 🛡️ Logic วินัยเหล็ก ---
-        function checkShiftStatus(type) {
-            const now = new Date();
-            const currentTime = now.getHours() + (now.getMinutes() / 60);
-            let start, end;
-
-            if (selectedShiftName === "กะเช้า") {
-                if (type === "เข้างาน") { start = 7; end = 9; }
-                else { start = 19; end = 21; }
-            } else if (selectedShiftName === "กะดึก") {
-                if (type === "เข้างาน") { start = 19; end = 21; }
-                else { start = 7; end = 9; }
-            }
-
-            if (currentTime < start) return "BEFORE";
-            if (currentTime > end) return "AFTER";
-            return "OK";
-        }
-
-        async function handleAction(type) {
-            const name = document.getElementById('empList').value;
-            const loc = document.getElementById('locList').value;
-
-            if (!name || !loc || !selectedShiftName) {
-                showPopup("⚠️ กรุณาเลือกข้อมูลให้ครบ:<br>(ชื่อ, สถานที่, กะงาน)");
-                return;
-            }
-
-            const status = checkShiftStatus(type);
-            const styledAction = `<b><u>${type}</u></b>`;
-
-            if (status === "BEFORE") {
-                showPopup(`⏳ ยังไม่ถึงเวลา ${styledAction} กรรุนารอ`);
-                return;
-            } 
-            if (status === "AFTER") {
-                showPopup(`❌ เสียใจด้วย! เกินเวลาที่กำหนด ${styledAction} แล้ว`);
-                return;
-            }
-
-            if(confirm(`ยืนยันการบันทึก [${type}] ?`)) {
-                sendData(name, loc, type, selectedShiftName, "บันทึกปกติ");
-            }
-        }
-
-        // --- ส่งข้อมูลไปยัง Sheet ---
-        async function sendData(name, loc, type, shift, note) {
-            const payload = { name, location: loc, type, shift, note };
-            try {
-                document.body.style.opacity = "0.5";
-                document.body.style.pointerEvents = "none";
-                const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-                const result = await res.json();
-                if(result.status === "success") {
-                    showPopup("✅ บันทึกข้อมูลสำเร็จ!", true);
-                    setTimeout(() => location.reload(), 2000);
-                } else {
-                    throw new Error();
-                }
-            } catch (e) {
-                showPopup("❌ บันทึกไม่สำเร็จ โปรดตรวจสอบอินเทอร์เน็ต");
-                document.body.style.opacity = "1";
-                document.body.style.pointerEvents = "auto";
-            }
-        }
-
-        // --- ฟังก์ชันเสริมอื่นๆ (การลา/กิจกรรม) ---
-        function openLeaveModal(type) {
-            const name = document.getElementById('empList').value;
-            if (!name) return showPopup("⚠️ กรุณาเลือกชื่อพนักงานก่อนครับ");
-            currentLeaveType = type;
-            selectedDates = [];
-            document.getElementById('leaveTitle').innerText = `📝 แจ้ง [${type}]`;
-            document.getElementById('dateBadgeContainer').innerHTML = "";
-            document.getElementById('leaveNote').value = "";
-            document.getElementById('leaveModal').classList.remove('hidden');
-        }
-
-        function closeLeaveModal() {
-            document.getElementById('leaveModal').classList.add('hidden');
-        }
-
-        document.getElementById('leaveDateInput').addEventListener('change', function(e) {
-            const date = e.target.value;
-            if (date && !selectedDates.includes(date)) {
-                selectedDates.push(date);
-                renderDateBadges();
-            }
-            e.target.value = "";
-        });
-
-        function renderDateBadges() {
-            const container = document.getElementById('dateBadgeContainer');
-            container.innerHTML = selectedDates.map((d, index) => `
-                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[11px] font-black flex items-center gap-2 animate-fadeIn border border-blue-200 uppercase">
-                    ${d} <button onclick="removeDate(${index})" class="text-blue-400 hover:text-red-500 font-black">✕</button>
-                </span>`).join('');
-        }
-
-        function removeDate(index) {
-            selectedDates.splice(index, 1);
-            renderDateBadges();
-        }
-
-        async function submitLeave() {
-            const name = document.getElementById('empList').value;
-            const loc = document.getElementById('locList').value || "ไม่ระบุ";
-            const note = document.getElementById('leaveNote').value;
-            if (selectedDates.length === 0) return showPopup("⚠️ เลือกวันที่อย่างน้อย 1 วัน");
-            if (!note.trim()) return showPopup("⚠️ กรุณาระบุเหตุผลการลา");
-            closeLeaveModal();
-            sendData(name, loc, currentLeaveType, "กรณีพิเศษ", `[วันที่: ${selectedDates.join(', ')}] เหตุผล: ${note}`);
-        }
-
-        function renderActivity(activities) {
-            const container = document.getElementById('activityContainer');
-            if (activities.length === 0) {
-                container.innerHTML = '<div class="text-center text-slate-400 italic">ไม่มีข้อมูลล่าสุด</div>';
-                return;
-            }
-            container.innerHTML = activities.slice(0, 5).map(act => `
-                <div class="flex items-center justify-between p-3 border-b border-slate-50 last:border-none animate-fadeIn">
-                    <div class="flex flex-col">
-                        <span class="font-black text-slate-800 uppercase text-xs tracking-tighter">${act.name}</span>
-                        <span class="text-[9px] text-slate-400 font-bold uppercase italic">${act.time}</span>
-                    </div>
-                    <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase ${
-                        act.type.includes('เข้างาน') ? 'bg-emerald-100 text-emerald-600 '  : 
-                        act.type.includes('ออกงาน') ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-600'
-                    }">${act.type}</span>
-                </div>`).join('');
+        function showRulePopup() {
+            const rules = ["1. สายนาทีละ 5 บาท", "2. ลืมแจ้งเข้างาน 400.-", "3. ลืมแจ้งออก 250.-", "4. ออกก่อนเวลาได้ 1 ครั้ง/เดือน", "5. ลาครึ่งวันหัก 0.5 แรง", "6. พนักงานใหม่เรียนงาน 14 วัน", "7. ลาออกต้องแจ้งล่วงหน้า 15 วัน"];
+            showModernToast("กฎระเบียบ", `<div class='text-left text-xs bg-slate-50 p-4 rounded-2xl'>${rules.map(r=>`<div>${r}</div>`).join('')}</div>`, "📋", false);
         }
     </script>
 </body>
