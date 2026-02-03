@@ -22,18 +22,11 @@
             background-color: #f1f5f9; 
             font-size: 14px; 
             color: #334155; 
-            overscroll-behavior-y: contain; /* ป้องกันการดึงเพื่อ Refresh ใน iPhone */
-            
-            /* แก้ไข: ดันเนื้อหาลงมาจากส่วน Status Bar อัตโนมัติ */
+            overscroll-behavior-y: contain;
             padding-top: env(safe-area-inset-top);
             min-height: calc(100vh + env(safe-area-inset-top));
         }
-        
-        /* เพิ่มเติม: ส่วนเว้นระยะของ Container หลัก */
-        .main-container {
-            padding-top: 1.5rem; /* ระยะห่างเพิ่มเติมหลังจากพ้น Safe Area มาแล้ว */
-        }
-
+        .main-container { padding-top: 1.5rem; }
         .glass-popup { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); }
         .pop-in { animation: springIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .shift-active { border: 3px solid #3b82f6 !important; background-color: #ffffff !important; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2); }
@@ -142,8 +135,8 @@
                     <div id="dateListDisplay2" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
                 <div>
-                    <label class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest italic">หมายเหตุ</label>
-                    <textarea id="leaveNote" rows="2" placeholder="..." class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner text-sm"></textarea>
+                    <label class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest italic">หมายเหตุเพิ่มเติม</label>
+                    <textarea id="leaveNote" rows="2" placeholder="ใส่เหตุผล (ถ้ามี)..." class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner text-sm"></textarea>
                 </div>
             </div>
             <div class="flex gap-3 mt-8">
@@ -208,6 +201,7 @@
                         <span class="font-black text-slate-700 text-[13px]">${item.name}</span>
                         <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">${item.time} | ${item.shift}</span>
                         ${item.duration ? `<span class="text-[11px] text-blue-600 font-black italic mt-1 animate-pulse">⏱️ ${item.duration}</span>` : ''}
+                        <span class="text-[9px] text-slate-400 mt-0.5">${item.note || ''}</span>
                     </div>
                     <div class="flex flex-col items-end gap-1">
                         <span class="px-3 py-1 rounded-full text-[9px] font-black italic uppercase 
@@ -221,23 +215,37 @@
             `).join('');
         }
 
-        async function executeSubmit(name, loc, type, shift, note, saveCool) {
+        // --- แก้ไขจุดนี้: ฟังก์ชันส่งข้อมูลที่รวม Note ไปด้วยแน่นอน ---
+        async function executeSubmit(name, loc, type, shift, noteValue, saveCool) {
             try {
                 isProcessing = true;
                 document.body.style.opacity = "0.6";
-                const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ name, location: loc, type, shift, note }) });
+                
+                const payload = {
+                    name: name,
+                    location: loc,
+                    type: type,
+                    shift: shift,
+                    note: noteValue // ส่งค่าหมายเหตุเข้าที่นี่
+                };
+
+                const res = await fetch(API_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload) 
+                });
+                
                 const data = await res.json();
                 if(data.status === "success") {
                     if (saveCool) localStorage.setItem(`last_${name}_${type}`, new Date().toISOString());
                     
-                    let successMsg = `${type}<br>${note}`;
+                    let successMsg = `${type}<br><span class='text-slate-500 text-xs'>${noteValue}</span>`;
                     if (data.duration) successMsg += `<br><span class="text-blue-600 font-black">⏱️ รวมเวลา: ${data.duration}</span>`;
                     
                     showModernToast("สำเร็จ!", successMsg, "✅", true);
                     loadRecentActivities();
                 }
             } catch (e) {
-                showModernToast("Error", "ลองใหม่ค่ะ", "📡", false);
+                showModernToast("Error", "การส่งข้อมูลขัดข้อง", "📡", false);
             } finally {
                 isProcessing = false;
                 document.body.style.opacity = "1";
@@ -275,6 +283,7 @@
                 if (diff < COOLDOWN_MINUTES) return showModernToast("บันทึกซ้ำ!", `รออีก ${Math.ceil(COOLDOWN_MINUTES - diff)} นาที`, "⏳", false);
             }
             
+            // คำนวณสาย/ก่อนเวลาอัตโนมัติ
             const timeData = getSmartTimeNote(type, selectedShiftName);
             executeSubmit(name, loc, type, selectedShiftName, timeData.note, true);
         }
@@ -286,6 +295,7 @@
             currentLeaveType = type; datesSet1 = []; datesSet2 = []; renderDateTags();
             document.getElementById('leaveModalTitle').innerText = "รายการ: " + type;
             document.getElementById('date2Area').className = (type === 'สลับหยุด') ? "block" : "hidden";
+            document.getElementById('leaveNote').value = ""; // Clear note
             document.getElementById('leaveModal').classList.remove('hidden');
         }
 
@@ -307,19 +317,42 @@
             document.getElementById('dateListDisplay2').innerHTML = datesSet2.map(d => `<span class="date-tag bg-blue-100 text-blue-700">${d} <button onclick="removeDate(2,'${d}')" class="text-rose-500">×</button></span>`).join('');
         }
 
+        // --- แก้ไขจุดนี้: ย้ายค่าวันที่และเหตุผลไปใส่ใน Note ---
         async function confirmLeaveSubmit() {
             if (datesSet1.length === 0) return alert("เลือกวันที่ก่อนค่ะ");
-            let note = `[${currentLeaveType}] วันที่: ${datesSet1.join(', ')}`;
-            if (currentLeaveType === 'สลับหยุด') note += ` | แทน: ${datesSet2.join(', ')}`;
+            
+            const extraNote = document.getElementById('leaveNote').value.trim();
+            let finalNote = `[${currentLeaveType}] วันที่: ${datesSet1.join(', ')}`;
+            
+            if (currentLeaveType === 'สลับหยุด') {
+                finalNote += ` | แทนวันที่: ${datesSet2.join(', ')}`;
+            }
+            
+            if (extraNote) {
+                finalNote += ` (หมายเหตุ: ${extraNote})`;
+            }
+
             closeLeaveModal();
-            executeSubmit(document.getElementById('empList').value, document.getElementById('locList').value, currentLeaveType, "-", note, false);
+            executeSubmit(
+                document.getElementById('empList').value, 
+                document.getElementById('locList').value || "-", 
+                currentLeaveType, 
+                "-", 
+                finalNote, 
+                false
+            );
         }
 
         function getSmartTimeNote(type, shift) {
-            const now = new Date(); const cur = (now.getHours() * 60) + now.getMinutes();
+            const now = new Date(); 
+            const cur = (now.getHours() * 60) + now.getMinutes();
+            // เช้าเข้า 08:00 (480), เช้าออก 18:30 (1110) | ดึกเข้า 20:00 (1200), ดึกออก 08:00 (480)
             let target = (type === 'เข้างาน') ? (shift === 'กะเช้า' ? 480 : 1200) : (shift === 'กะเช้า' ? 1110 : 480);
-            let diff = cur - target; if (diff > 720) diff -= 1440; if (diff < -720) diff += 1440;
-            return { note: `${type} ${diff > 0 ? 'ช้า' : 'ก่อน'} ${Math.abs(diff)} นาที` };
+            let diff = cur - target; 
+            if (diff > 720) diff -= 1440; 
+            if (diff < -720) diff += 1440;
+            
+            return { note: `${type}${diff > 0 ? 'ช้า' : 'ก่อน'} ${Math.abs(diff)} นาที` };
         }
 
         function showModernToast(title, msg, icon, auto) {
@@ -360,20 +393,14 @@
              "1. เข้ามาสายนาทีละ 5.-",
              "2. ลืมแจ้งเข้างาน 400.- /ครั้ง",
              "3. ลืมแจ้งออก 250.- /ครั้ง",
-             "4. ลางานครึ่งวันหัก 0,5 แรง/ครั้ง",
+             "4. ลางานครึ่งวันหัก 0.5 แรง/ครั้ง",
              "5. ทำงานอื่นในเวลางานหัก 1,000.- /ครั้ง",
-             "6. ลากิจได้สูงสุด 4 วัน/เดือน",
-             "7. ออกก่อนเวลาได้ 1 ครั่ง/เดือน",
-             "8. ลาออกต้องแจ้งล่วงหน้า 15 วัน",
-             "9. พนักงานใหม่ต้องเรียนงาน 14 วัน",
              "------------------------------------",
-             "*** กฎการใช้งาน WORK SMART ***",
-             "------------------------------------",
-             "* ถ้ากดผิดต้องรอ 5 นาที ถึงจะกดได้อีกครั้ง",
-             "* ต้องกดเข้างานตามเวลาที่กำหนดเท่านั้น",
-             "07:00-09:30 กะเช้า | 18:30-21:00 กะดึก",
-             "* ถ้ากดนอกเวลาจะไม่ทูกบันทึกข้อมูล ระบบจะแจ้งเตือนทันที",
-             "* ถ้าแจ้งเข้า-ออกงานเกิน + - 120 นาที ระบบจะแจ้งให้บันทึกข้อมูนเวลาทัดไปแทน และ จะถือว่าครั้งนี้เป็นลืมแจ้งเข้า-ออกงานทันที",
+             "*** กฎระบบ WORK SMART ***",
+             "* ถ้ากดผิดต้องรอ 5 นาที ถึงจะกดซ้ำได้",
+             "* เข้างานกะเช้า: 07:00-09:30",
+             "* เข้างานกะดึก: 18:30-21:00",
+             "* ระบบจะคำนวณ 'สาย' ให้อัตโนมัติ"
             ];
             showModernToast("กฎระเบียบ", `<div class='text-left text-xs bg-slate-50 p-4 rounded-2xl'>${rules.map(r=>`<div>${r}</div>`).join('')}</div>`, "📋", false);
         }
