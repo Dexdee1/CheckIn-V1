@@ -10,13 +10,11 @@
         body { font-family: 'Noto Sans Thai', sans-serif; background-color: #f1f5f9; font-size: 14px; color: #334155; }
         .glass-popup { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); }
         .pop-in { animation: springIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-        .pop-out { animation: springOut 0.3s ease forwards; }
-        @keyframes springIn { from { opacity: 0; transform: scale(0.8) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes springOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.9) translateY(-10px); } }
         .shift-active { border: 3px solid #3b82f6 !important; background-color: #ffffff !important; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-        input[type="date"] { -webkit-appearance: none; min-height: 50px; }
         .date-tag { background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 99px; font-weight: 700; font-size: 11px; display: flex; align-items: center; gap: 5px; }
+        .activity-item { animation: slideInLeft 0.5s ease-out; border-bottom: 1px solid #f1f5f9; }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes springIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body class="antialiased">
@@ -33,13 +31,13 @@
         <div class="bg-white/80 backdrop-blur-md p-6 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-white mb-6 space-y-5">
             <div>
                 <label class="font-black text-slate-400 uppercase tracking-widest ml-4 text-[10px]">พนักงาน</label>
-                <select id="empList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner italic">
-                    <option value="">-- กำลังดาวโหลดข้อมูลค่ะ --</option>
+                <select id="empList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner italic text-sm">
+                    <option value="">-- กำลังดาวโหลดข้อมูล --</option>
                 </select>
             </div>
             <div>
                 <label class="font-black text-slate-400 uppercase tracking-widest ml-4 text-[10px]">เว็บที่ทำงาน</label>
-                <select id="locList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner italic">
+                <select id="locList" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner italic text-sm">
                     <option value="">-- เลือกเว็บที่ทำงาน --</option>
                 </select>
             </div>
@@ -67,7 +65,7 @@
                 </div>
             </section>
 
-            <section class="space-y-4 pb-10">
+            <section class="space-y-4">
                 <div class="flex items-center gap-2 px-2">
                     <div class="w-2 h-5 bg-blue-500 rounded-full"></div>
                     <h2 class="font-black text-slate-700 italic uppercase text-sm">การลางาน & อื่นๆ</h2>
@@ -79,50 +77,61 @@
                     <button onclick="handleLeave(this, 'ออกก่อนเวลา')" class="bg-white py-4 rounded-2xl shadow-sm text-blue-600 font-black border border-white italic text-[13px]">🏃 ออกก่อน</button>
                 </div>
             </section>
+
+            <section class="mt-4 pb-10">
+                <div class="flex justify-between items-center px-2 mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-5 bg-slate-400 rounded-full"></div>
+                        <h2 class="font-black text-slate-700 italic uppercase text-[13px]">กิจกรรมล่าสุด (5 รายการ)</h2>
+                    </div>
+                    <div id="loadingStatus" class="hidden text-[10px] font-bold text-blue-500 animate-pulse uppercase">Updating...</div>
+                </div>
+                <div class="bg-white/50 backdrop-blur-sm rounded-[2rem] border border-white overflow-hidden shadow-sm shadow-slate-200">
+                    <div id="recentActivityList" class="divide-y divide-slate-100">
+                        <div class="p-6 text-center text-slate-400 italic text-xs">กำลังโหลดข้อมูลล่าสุด...</div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
     <div id="leaveModal" class="fixed inset-0 z-[1100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl pop-in max-h-[90vh] overflow-y-auto">
-            <h3 id="leaveModalTitle" class="text-2xl font-black text-slate-800 italic uppercase mb-4 underline decoration-blue-500">แจ้งลางาน</h3>
-            
+            <h3 id="leaveModalTitle" class="text-2xl font-black text-slate-800 italic uppercase mb-4 underline decoration-blue-500 text-center">แจ้งลางาน</h3>
             <div class="space-y-4 text-left">
                 <div>
-                    <label id="date1Label" class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest">วันที่ต้องการลา</label>
+                    <label id="date1Label" class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest italic">วันที่ลา</label>
                     <div class="flex gap-2 mt-1">
-                        <input type="date" id="dateInput1" class="flex-1 p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 shadow-inner">
-                        <button onclick="addDateToList(1)" class="bg-blue-600 text-white px-4 rounded-2xl font-black text-xl active:scale-90">+</button>
+                        <input type="date" id="dateInput1" class="flex-1 p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 shadow-inner text-sm">
+                        <button onclick="addDateToList(1)" class="bg-blue-600 text-white px-4 rounded-2xl font-black text-xl">+</button>
                     </div>
                     <div id="dateListDisplay1" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
-
                 <div id="date2Area" class="hidden">
-                    <label class="font-black text-blue-500 text-[10px] uppercase ml-2 tracking-widest">จะมาทำงานแทนในวันที่</label>
+                    <label class="font-black text-blue-500 text-[10px] uppercase ml-2 tracking-widest italic">มาแทนวันที่</label>
                     <div class="flex gap-2 mt-1">
-                        <input type="date" id="dateInput2" class="flex-1 p-4 bg-blue-50 rounded-2xl border-2 border-blue-100 outline-none font-bold text-slate-700">
-                        <button onclick="addDateToList(2)" class="bg-blue-600 text-white px-4 rounded-2xl font-black text-xl active:scale-90">+</button>
+                        <input type="date" id="dateInput2" class="flex-1 p-4 bg-blue-50 rounded-2xl border-2 border-blue-100 outline-none font-bold text-slate-700 text-sm">
+                        <button onclick="addDateToList(2)" class="bg-blue-600 text-white px-4 rounded-2xl font-black text-xl">+</button>
                     </div>
                     <div id="dateListDisplay2" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
-
                 <div>
-                    <label class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest">หมายเหตุ</label>
-                    <textarea id="leaveNote" rows="2" placeholder="ระบุเพิ่มเติม..." class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner"></textarea>
+                    <label class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest italic">หมายเหตุ</label>
+                    <textarea id="leaveNote" rows="2" placeholder="..." class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner text-sm"></textarea>
                 </div>
             </div>
-
             <div class="flex gap-3 mt-8">
                 <button onclick="closeLeaveModal()" class="flex-1 bg-slate-100 text-slate-500 py-4 rounded-2xl font-black uppercase italic">ยกเลิก</button>
-                <button onclick="confirmLeaveSubmit()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black uppercase italic shadow-lg shadow-blue-200">ส่งข้อมูล</button>
+                <button onclick="confirmLeaveSubmit()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black uppercase italic">ส่งข้อมูล</button>
             </div>
         </div>
     </div>
 
     <div id="appToast" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-[3px]">
         <div id="toastContent" class="glass-popup w-full max-w-[320px] rounded-[3rem] p-10 shadow-2xl text-center">
-            <div id="toastIcon" class="text-7xl mb-6 drop-shadow-md">✅</div>
+            <div id="toastIcon" class="text-7xl mb-6">✅</div>
             <h3 id="toastTitle" class="font-black text-slate-800 uppercase text-xl mb-2 italic">สำเร็จ!</h3>
-            <p id="toastMsg" class="font-bold text-slate-500 leading-relaxed text-base"></p>
+            <p id="toastMsg" class="font-bold text-slate-500 leading-relaxed text-sm"></p>
             <div id="toastBar" class="w-full bg-slate-100 h-1.5 mt-8 rounded-full overflow-hidden">
                 <div id="toastProgress" class="bg-blue-500 h-full w-0 transition-all duration-[2000ms] ease-linear"></div>
             </div>
@@ -135,29 +144,91 @@
         const COOLDOWN_MINUTES = 5; 
         let selectedShiftName = "";
         let isProcessing = false;
-        let currentLeaveType = "";
         let datesSet1 = [];
         let datesSet2 = [];
+        let currentLeaveType = "";
 
         window.onload = () => fetchInitialData();
 
-        // --- 🛡️ วินัยเหล็ก: เช็คเวลาเข้า-ออก ---
+        async function fetchInitialData() {
+            try {
+                const res = await fetch(API_URL + "?action=getData");
+                const data = await res.json();
+                document.getElementById('empList').innerHTML = '<option value="">-- เลือกพนักงาน --</option>' + data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
+                document.getElementById('locList').innerHTML = '<option value="">-- เลือกเว็บที่ทำงาน --</option>' + data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
+                renderActivities(data.recent);
+            } catch (e) { document.getElementById('empList').innerHTML = '<option value="">❌ โหลดไม่สำเร็จ</option>'; }
+        }
+
+        async function loadRecentActivities() {
+            document.getElementById('loadingStatus').classList.remove('hidden');
+            try {
+                const res = await fetch(API_URL + "?action=getRecent");
+                const data = await res.json();
+                renderActivities(data.recent);
+            } catch (e) { console.error("Load fail"); }
+            finally { document.getElementById('loadingStatus').classList.add('hidden'); }
+        }
+
+        function renderActivities(list) {
+            const listEl = document.getElementById('recentActivityList');
+            if (!list || list.length === 0) {
+                listEl.innerHTML = '<div class="p-6 text-center text-slate-400 italic text-xs">ยังไม่มีประวัติวันนี้</div>';
+                return;
+            }
+            listEl.innerHTML = list.map(item => `
+                <div class="p-4 flex justify-between items-center bg-white/40 activity-item">
+                    <div class="flex flex-col">
+                        <span class="font-black text-slate-700 text-[13px]">${item.name}</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">${item.time} | ${item.shift}</span>
+                        ${item.duration ? `<span class="text-[11px] text-blue-600 font-black italic mt-1 animate-pulse">⏱️ ${item.duration}</span>` : ''}
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                        <span class="px-3 py-1 rounded-full text-[9px] font-black italic uppercase 
+                            ${item.type === 'เข้างาน' ? 'bg-emerald-100 text-emerald-600' : 
+                              item.type === 'ออกงาน' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600'}">
+                            ${item.type}
+                        </span>
+                        <span class="text-[9px] text-slate-400 italic">${item.loc || ''}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function executeSubmit(name, loc, type, shift, note, saveCool) {
+            try {
+                isProcessing = true;
+                document.body.style.opacity = "0.6";
+                const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ name, location: loc, type, shift, note }) });
+                const data = await res.json();
+                if(data.status === "success") {
+                    // ปรับปรุง: เก็บ Cooldown แยกตามประเภทงาน
+                    if (saveCool) localStorage.setItem(`last_${name}_${type}`, new Date().toISOString());
+                    
+                    let successMsg = `${type}<br>${note}`;
+                    if (data.duration) successMsg += `<br><span class="text-blue-600 font-black">⏱️ รวมเวลา: ${data.duration}</span>`;
+                    
+                    showModernToast("สำเร็จ!", successMsg, "✅", true);
+                    loadRecentActivities();
+                }
+            } catch (e) {
+                showModernToast("Error", "ลองใหม่ค่ะ", "📡", false);
+            } finally {
+                isProcessing = false;
+                document.body.style.opacity = "1";
+            }
+        }
+
         function checkShiftWindow(action) {
             const now = new Date();
             const time = now.getHours() + (now.getMinutes() / 60);
-            
             let start, end;
             if (selectedShiftName === "กะเช้า") {
-                if (action === "เข้างาน") { start = 7; end = 9; }
-                else { start = 19; end = 21; }
+                if (action === "เข้างาน") { start = 7.0; end = 9.5; } else { start = 18.5; end = 21.0; }
             } else if (selectedShiftName === "กะดึก") {
-                if (action === "เข้างาน") { start = 19; end = 21; }
-                else { start = 7; end = 9; }
+                if (action === "เข้างาน") { start = 18.5; end = 21.0; } else { start = 6.5; end = 9.5; }
             } else return "NO_SHIFT";
-
-            if (time < start) return "BEFORE";
-            if (time > end) return "AFTER";
-            return "OK";
+            return (time < start) ? "BEFORE" : (time > end) ? "AFTER" : "OK";
         }
 
         async function handleAction(type) {
@@ -165,34 +236,32 @@
             const name = document.getElementById('empList').value;
             const loc = document.getElementById('locList').value;
 
-            if (!name || !loc || !selectedShiftName) return showModernToast("ข้อมูลไม่ครบ", "เลือกชื่อ เว็บ และกะก่อนค่ะ", "⚠️", false);
-            
-            const status = checkShiftWindow(type);
-            if (status === "BEFORE") return showModernToast("ยังไม่ถึงเวลา", `ยังไม่ถึงเวลาแจ้ง ${type} ค่ะ`, "⏳", false);
-            if (status === "AFTER") return showModernToast("เกินเวลา", `เกินเวลาแจ้ง ${type} ที่กำหนดแล้วค่ะ`, "❌", false);
+            // ตรวจสอบความครบถ้วนแบบแยกแจ้งเตือน
+            if (!name) return showModernToast("ข้อมูลไม่ครบ", "กรุณาเลือกชื่อพนักงานค่ะ", "👤", false);
+            if (!loc) return showModernToast("ข้อมูลไม่ครบ", "กรุณาเลือกเว็บที่ทำงานค่ะ", "📍", false);
+            if (!selectedShiftName) return showModernToast("ข้อมูลไม่ครบ", "กรุณากดเลือก 'กะเช้า' หรือ 'กะดึก' ค่ะ", "⏰", false);
 
-            const lastTime = localStorage.getItem(`last_${name}`);
+            const status = checkShiftWindow(type);
+            if (status === "BEFORE") return showModernToast("ยังไม่ถึงเวลา", `ช่วง ${type} ของ ${selectedShiftName} ยังไม่เปิดค่ะ`, "⏳", false);
+            if (status === "AFTER") return showModernToast("เกินเวลา", `เกินกำหนดแจ้ง ${type} แล้วค่ะ`, "❌", false);
+            
+            // เช็ค Cooldown แบบแยก เข้า/ออก
+            const lastTime = localStorage.getItem(`last_${name}_${type}`);
             if (lastTime) {
                 const diff = (new Date() - new Date(lastTime)) / 60000;
                 if (diff < COOLDOWN_MINUTES) return showModernToast("บันทึกซ้ำ!", `รออีก ${Math.ceil(COOLDOWN_MINUTES - diff)} นาที`, "⏳", false);
             }
-
+            
             const timeData = getSmartTimeNote(type, selectedShiftName);
             executeSubmit(name, loc, type, selectedShiftName, timeData.note, true);
         }
 
-        // --- 🗓️ ระบบลางาน Multi-Date ---
         function handleLeave(btn, type) {
             if (isProcessing) return;
             const name = document.getElementById('empList').value;
-            if (!name) return showModernToast("ข้อมูลไม่ครบ", "เลือกชื่อพนักงานก่อนค่ะ", "⚠️", false);
-            
-            currentLeaveType = type;
-            datesSet1 = []; datesSet2 = [];
-            renderDateTags();
-            
+            if (!name) return showModernToast("ข้อมูลไม่ครบ", "เลือกชื่อก่อนค่ะ", "⚠️", false);
+            currentLeaveType = type; datesSet1 = []; datesSet2 = []; renderDateTags();
             document.getElementById('leaveModalTitle').innerText = "รายการ: " + type;
-            document.getElementById('date1Label').innerText = (type === 'สลับหยุด') ? "วันที่หยุดงาน" : "วันที่ต้องการลา";
             document.getElementById('date2Area').className = (type === 'สลับหยุด') ? "block" : "hidden";
             document.getElementById('leaveModal').classList.remove('hidden');
         }
@@ -201,17 +270,12 @@
             const input = document.getElementById(`dateInput${num}`);
             if (!input.value) return;
             const target = (num === 1) ? datesSet1 : datesSet2;
-            if (!target.includes(input.value)) {
-                target.push(input.value);
-                target.sort();
-                renderDateTags();
-            }
+            if (!target.includes(input.value)) { target.push(input.value); target.sort(); renderDateTags(); }
             input.value = "";
         }
 
         function removeDate(num, val) {
-            if (num === 1) datesSet1 = datesSet1.filter(d => d !== val);
-            else datesSet2 = datesSet2.filter(d => d !== val);
+            if (num === 1) datesSet1 = datesSet1.filter(d => d !== val); else datesSet2 = datesSet2.filter(d => d !== val);
             renderDateTags();
         }
 
@@ -221,79 +285,55 @@
         }
 
         async function confirmLeaveSubmit() {
-            if (datesSet1.length === 0) return alert("กรุณาเลือกวันที่ก่อนกดส่งค่ะ (กดปุ่ม + เพื่อเพิ่ม)");
-            if (currentLeaveType === 'สลับหยุด' && datesSet2.length === 0) return alert("กรุณาระบุวันที่จะมาทำงานแทนค่ะ");
-
+            if (datesSet1.length === 0) return alert("เลือกวันที่ก่อนค่ะ");
             let note = `[${currentLeaveType}] วันที่: ${datesSet1.join(', ')}`;
-            if (currentLeaveType === 'สลับหยุด') note += ` | แทนวันที่: ${datesSet2.join(', ')}`;
-            const extra = document.getElementById('leaveNote').value;
-            if (extra) note += ` (หมายเหตุ: ${extra})`;
-
+            if (currentLeaveType === 'สลับหยุด') note += ` | แทน: ${datesSet2.join(', ')}`;
             closeLeaveModal();
             executeSubmit(document.getElementById('empList').value, document.getElementById('locList').value, currentLeaveType, "-", note, false);
         }
 
-        // --- Core Functions ---
-        async function executeSubmit(name, loc, type, shift, note, saveCool) {
-            try {
-                isProcessing = true;
-                document.body.style.opacity = "0.6";
-                const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ name, location: loc, type, shift, note }) });
-                const data = await res.json();
-                if(data.status === "success") {
-                    if (saveCool) localStorage.setItem(`last_${name}`, new Date().toISOString());
-                    showModernToast("สำเร็จ!", `${type}<br>${note}`, "✅", true);
-                }
-            } catch (e) {
-                showModernToast("Error", "ลองใหม่ค่ะ", "📡", false);
-                isProcessing = false;
-                document.body.style.opacity = "1";
-            }
-        }
-
         function getSmartTimeNote(type, shift) {
-            const now = new Date();
-            const cur = (now.getHours() * 60) + now.getMinutes();
-            let target = (type === 'เข้างาน') ? (shift === 'กะเช้า' ? 480 : 1200) : (shift === 'กะเช้า' ? 1200 : 480);
-            let diff = cur - target;
-            if (diff > 720) diff -= 1440; if (diff < -720) diff += 1440;
+            const now = new Date(); const cur = (now.getHours() * 60) + now.getMinutes();
+            let target = (type === 'เข้างาน') ? (shift === 'กะเช้า' ? 480 : 1200) : (shift === 'กะเช้า' ? 1110 : 480);
+            let diff = cur - target; if (diff > 720) diff -= 1440; if (diff < -720) diff += 1440;
             return { note: `${type} ${diff > 0 ? 'ช้า' : 'ก่อน'} ${Math.abs(diff)} นาที` };
-        }
-
-        async function fetchInitialData() {
-            try {
-                const res = await fetch(API_URL + "?action=getData");
-                const data = await res.json();
-                document.getElementById('empList').innerHTML = '<option value="">-- เลือกพนักงาน --</option>' + data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
-                document.getElementById('locList').innerHTML = '<option value="">-- เลือกเว็บที่ทำงาน --</option>' + data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
-            } catch (e) { document.getElementById('empList').innerHTML = '<option value="">❌ โหลดไม่สำเร็จ</option>'; }
         }
 
         function showModernToast(title, msg, icon, auto) {
             const t = document.getElementById('appToast');
-            document.getElementById('toastIcon').innerText = icon;
-            document.getElementById('toastTitle').innerText = title;
+            const progress = document.getElementById('toastProgress');
+            const closeBtn = document.getElementById('toastCloseBtn');
+            const bar = document.getElementById('toastBar');
+
+            document.getElementById('toastIcon').innerText = icon; 
+            document.getElementById('toastTitle').innerText = title; 
             document.getElementById('toastMsg').innerHTML = msg;
+            
             t.classList.remove('hidden');
+            
             if (auto) {
-                setTimeout(() => document.getElementById('toastProgress').style.width = '100%', 50);
-                setTimeout(() => location.reload(), 2200);
+                bar.classList.remove('hidden');
+                closeBtn.classList.add('hidden');
+                setTimeout(() => progress.style.width = '100%', 50);
+                setTimeout(() => location.reload(), 2500);
             } else {
-                document.getElementById('toastBar').classList.add('hidden');
-                document.getElementById('toastCloseBtn').classList.remove('hidden');
+                bar.classList.add('hidden');
+                closeBtn.classList.remove('hidden');
+                progress.style.width = '0';
             }
         }
 
         function closeToast() { document.getElementById('appToast').classList.add('hidden'); }
         function closeLeaveModal() { document.getElementById('leaveModal').classList.add('hidden'); }
+        
         function selectShift(btn, name) {
             document.querySelectorAll('.shift-btn').forEach(b => b.classList.remove('shift-active'));
-            btn.classList.add('shift-active');
+            btn.classList.add('shift-active'); 
             selectedShiftName = name;
         }
 
         function showRulePopup() {
-            const rules = ["1. สายนาทีละ 5 บาท", "2. ลืมแจ้งเข้างาน 400.-", "3. ลืมแจ้งออก 250.-", "4. ออกก่อนเวลาได้ 1 ครั้ง/เดือน", "5. ลาครึ่งวันหัก 0.5 แรง", "6. พนักงานใหม่เรียนงาน 14 วัน", "7. ลาออกต้องแจ้งล่วงหน้า 15 วัน"];
+            const rules = ["1. สายนาทีละ 5 บาท", "2. ลืมแจ้งเข้างาน 400.-", "3. ลืมแจ้งออก 250.-", "4. ลาออกต้องแจ้งล่วงหน้า 15 วัน"];
             showModernToast("กฎระเบียบ", `<div class='text-left text-xs bg-slate-50 p-4 rounded-2xl'>${rules.map(r=>`<div>${r}</div>`).join('')}</div>`, "📋", false);
         }
     </script>
