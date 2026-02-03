@@ -46,22 +46,22 @@
                 </div>
                 <div class="flex gap-2 w-full md:w-auto">
                     <button onclick="fetchHistory()" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-16 font-black shadow-lg active:scale-95 transition-all uppercase italic">รีเฟรช</button>
-                    <button onclick="location.reload()" class="flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 px-6 py-3 rounded-2xl text-16 font-black active:scale-95 transition-all uppercase italic">ออก</button>
+                    <button onclick="location.href='index.html'" class="flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 px-6 py-3 rounded-2xl text-16 font-black active:scale-95 transition-all uppercase italic hover:bg-rose-50 shadow-sm">ออก</button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 animate-fadeIn">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 animate-fadeIn">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
                     <p class="text-[14px] font-black text-slate-400 uppercase italic">พนักงานทั้งหมด</p>
                     <p id="statCount" class="text-2xl font-black text-slate-800 italic uppercase">0 คน</p>
                 </div>
                 <div class="bg-emerald-500 p-6 rounded-[2rem] shadow-lg shadow-emerald-500/20">
-                    <p class="text-[14px] font-black text-emerald-100 uppercase italic">บันทึกวันนี้</p>
+                    <p class="text-[14px] font-black text-emerald-100 uppercase italic">รายการบันทึกวันนี้</p>
                     <p id="todayInCount" class="text-2xl font-black text-white italic">0 รายการ</p> 
                 </div>
                 <div class="bg-slate-800 p-6 rounded-[2rem] shadow-lg shadow-slate-800/20">
-                    <p class="text-[14px] font-black text-slate-400 uppercase italic">ฐานข้อมูล</p>
-                    <a href="https://docs.google.com/spreadsheets/d/1T9SGAGI4525KLN2_nywkN1TvvY9qkUNJYGk8L0s7Bkw/edit" target="_blank" class="text-white font-bold text-[10px] underline decoration-blue-500 underline-offset-4 hover:text-blue-400 transition-colors uppercase italic">View Sheet ↗</a>
+                    <p class="text-[14px] font-black text-slate-400 uppercase italic">จัดการฐานข้อมูล</p>
+                    <a href="https://docs.google.com/spreadsheets/d/1T9SGAGI4525KLN2_nywkN1TvvY9qkUNJYGk8L0s7Bkw/edit" target="_blank" class="text-white font-bold text-[10px] underline decoration-blue-500 underline-offset-4 hover:text-blue-400 transition-colors uppercase italic">เปิด Google Sheet ↗</a>
                 </div>
             </div>
 
@@ -83,9 +83,9 @@
                     <div class="p-6 bg-slate-50 flex justify-between items-center border-b border-slate-100">
                         <div>
                             <h3 id="searchTitle" class="font-black italic uppercase text-blue-600 text-lg">Report: -</h3>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Work History Summary</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ประวัติการทำงานรายบุคคล</p>
                         </div>
-                        <button onclick="document.getElementById('searchResultSection').classList.add('hidden-page')" class="text-[10px] font-black bg-rose-100 text-rose-600 px-4 py-2 rounded-xl uppercase hover:bg-rose-200">CLOSE X</button>
+                        <button onclick="document.getElementById('searchResultSection').classList.add('hidden-page')" class="text-[10px] font-black bg-rose-100 text-rose-600 px-4 py-2 rounded-xl uppercase hover:bg-rose-200">ปิดรายงาน X</button>
                     </div>
                     <div class="table-container">
                         <table class="w-full text-left min-w-[700px]">
@@ -101,31 +101,6 @@
                             <tbody id="searchTableBody" class="text-sm font-medium text-slate-600"></tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden animate-fadeIn mb-12">
-                <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="font-black text-slate-700 italic uppercase text-[14px] flex items-center gap-2 tracking-widest">
-                        <span class="w-1.5 h-4 bg-slate-400 rounded-full"></span>
-                        กิจกรรมล่าสุด (5 รายการล่าสุด)
-                    </h3>
-                </div>
-                <div class="table-container">
-                    <table class="w-full text-left min-w-[800px]">
-                        <thead>
-                            <tr class="bg-slate-50/80">
-                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic">เวลา</th>
-                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic">ชื่อพนักงาน</th>
-                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic text-center">กะทำงาน</th>
-                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic text-center">เข้า-ออก/ลา</th>
-                                <th class="p-4 text-[14px] font-black text-slate-400 uppercase italic">หมายเหตุ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTableBody" class="text-sm font-medium text-slate-600">
-                            <tr><td colspan="5" class="p-10 text-center text-slate-300 italic uppercase font-black text-[14px]">กำลังดาวโหลดข้อมูลค่ะ</td></tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
@@ -150,54 +125,20 @@
         }
 
         async function fetchHistory() {
-            const tableBody = document.getElementById('historyTableBody');
             const filterSelect = document.getElementById('adminEmpFilter');
-            
             try {
                 const res = await fetch(`${API_URL}?action=getData&t=${new Date().getTime()}`);
                 const data = await res.json();
                 
                 document.getElementById('statCount').innerText = `${data.employees.length} คน`;
-                // แสดงจำนวนรายการล่าสุดแทน (หรือปรับตามโครงสร้าง data.summary ถ้ามี)
                 document.getElementById('todayInCount').innerText = `${data.recentActivity.length} รายการล่าสุด`;
 
                 filterSelect.innerHTML = '<option value="">-- เลือกชื่อพนักงาน --</option>' + 
                     data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
-
-                if(data.recentActivity) renderTable(data.recentActivity);
                 
             } catch (err) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-rose-400 font-bold uppercase">Error connecting to database</td></tr>';
+                console.error("Fetch Error:", err);
             }
-        }
-
-        function renderTable(history) {
-            const tableBody = document.getElementById('historyTableBody');
-            if (!history || history.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-slate-300 italic font-black text-[14px]">ยังไม่มีข้อมูลบันทึกค่ะ</td></tr>';
-                return;
-            }
-            tableBody.innerHTML = history.map(row => {
-                const typeStyle = row.type.includes('เข้างาน') ? 'bg-emerald-100 text-emerald-600' : 
-                                 row.type.includes('ออกงาน') ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600';
-                
-                return `
-                <tr class="border-b border-slate-50 hover:bg-slate-50/80 transition-colors">
-                    <td class="p-4">
-                        <div class="text-[10px] font-black text-slate-400 italic">${row.time}</div>
-                    </td>
-                    <td class="p-4 font-black text-slate-800 italic uppercase text-[11px] tracking-tighter">${row.name}</td>
-                    <td class="p-4 text-center">
-                        <span class="px-3 py-1 rounded-full text-[9px] font-black bg-slate-100 text-slate-500 border border-slate-200 italic uppercase">${row.shift || '-'}</span>
-                    </td>
-                    <td class="p-4 text-center">
-                        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase italic ${typeStyle}">${row.type}</span>
-                    </td>
-                    <td class="p-4">
-                        <p class="text-[10px] text-slate-500 font-bold uppercase leading-tight max-w-[200px] truncate-2 italic">${row.note || '-'}</p>
-                    </td>
-                </tr>`;
-            }).join('');
         }
 
         async function searchUserHistory() {
@@ -209,27 +150,26 @@
             const searchBody = document.getElementById('searchTableBody');
             const searchTitle = document.getElementById('searchTitle');
 
-            // เริ่มการโหลด
             btn.disabled = true;
             btn.innerText = "กำลังค้นหา...";
             searchSection.classList.remove('hidden-page');
-            searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-blue-400 animate-pulse font-black uppercase text-xs italic">กำลังดึงข้อมูลจาก Server...</td></tr>';
+            searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-blue-400 animate-pulse font-black uppercase text-xs italic">กำลังดึงข้อมูล...</td></tr>';
             searchTitle.innerText = `Report: ${name}`;
 
             try {
-                const res = await fetch(`${API_URL}?action=getUserHistory&name=${encodeURIComponent(name)}&t=${new Date().getTime()}`);
+                const res = await fetch(`${API_URL}?action=getIndividual&name=${encodeURIComponent(name)}&t=${new Date().getTime()}`);
                 const data = await res.json();
                 
-                if (!data.history || data.history.length === 0) {
-                    searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-slate-300 uppercase font-black italic text-xs">ไม่พบประวัติการทำงานของพนักงานคนนี้</td></tr>';
+                if (!data.records || data.records.length === 0) {
+                    searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-slate-300 uppercase font-black italic text-xs">ไม่พบข้อมูลของคนนี้</td></tr>';
                 } else {
-                    searchBody.innerHTML = data.history.map(row => {
+                    searchBody.innerHTML = data.records.map(row => {
                         const typeStyle = row.type.includes('เข้างาน') ? 'text-emerald-500 bg-emerald-50' : 
                                          row.type.includes('ออกงาน') ? 'text-rose-500 bg-rose-50' : 'text-blue-500 bg-blue-50';
                         return `
                         <tr class="border-b border-slate-50 hover:bg-blue-50/30 transition-colors">
-                            <td class="p-4 text-[10px] font-black text-slate-500 italic">${row.time}</td>
-                            <td class="p-4 text-[10px] font-black text-slate-600 uppercase italic">${row.location || '-'}</td>
+                            <td class="p-4 text-[10px] font-black text-slate-500 italic">${row.date} ${row.time}</td>
+                            <td class="p-4 text-[10px] font-black text-slate-600 uppercase italic">${row.location || row.loc || '-'}</td>
                             <td class="p-4 text-[10px] font-black text-slate-500 italic uppercase">${row.shift || '-'}</td>
                             <td class="p-4">
                                 <span class="font-black uppercase text-[9px] px-2 py-1 rounded-lg italic ${typeStyle}">${row.type}</span>
@@ -240,8 +180,7 @@
                 }
                 searchSection.scrollIntoView({ behavior: 'smooth' });
             } catch (err) {
-                console.error(err);
-                searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-rose-500 font-black italic">❌ การเชื่อมต่อล้มเหลว ตรวจสอบ Apps Script</td></tr>';
+                searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-rose-500 font-black italic">❌ ค้นหาไม่สำเร็จ</td></tr>';
             } finally {
                 btn.disabled = false;
                 btn.innerText = "ค้นหาข้อมูล";
