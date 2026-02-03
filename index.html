@@ -2,12 +2,28 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>Work Smart</title>
+    <meta name="apple-mobile-web-app-title" content="WorkSmart">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/png" href="icon.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <title>Work Smart (Smart Leave)</title>
+    
     <style>
-        body { font-family: 'Noto Sans Thai', sans-serif; background-color: #f1f5f9; font-size: 14px; color: #334155; }
+        body { 
+            font-family: 'Noto Sans Thai', sans-serif; 
+            background-color: #f1f5f9; 
+            font-size: 14px; 
+            color: #334155; 
+            overscroll-behavior-y: contain; /* ป้องกันการดึงเพื่อ Refresh ใน iPhone */
+        }
         .glass-popup { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); }
         .pop-in { animation: springIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .shift-active { border: 3px solid #3b82f6 !important; background-color: #ffffff !important; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2); }
@@ -202,7 +218,6 @@
                 const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ name, location: loc, type, shift, note }) });
                 const data = await res.json();
                 if(data.status === "success") {
-                    // ปรับปรุง: เก็บ Cooldown แยกตามประเภทงาน
                     if (saveCool) localStorage.setItem(`last_${name}_${type}`, new Date().toISOString());
                     
                     let successMsg = `${type}<br>${note}`;
@@ -236,7 +251,6 @@
             const name = document.getElementById('empList').value;
             const loc = document.getElementById('locList').value;
 
-            // ตรวจสอบความครบถ้วนแบบแยกแจ้งเตือน
             if (!name) return showModernToast("ข้อมูลไม่ครบ", "กรุณาเลือกชื่อพนักงานค่ะ", "👤", false);
             if (!loc) return showModernToast("ข้อมูลไม่ครบ", "กรุณาเลือกเว็บที่ทำงานค่ะ", "📍", false);
             if (!selectedShiftName) return showModernToast("ข้อมูลไม่ครบ", "กรุณากดเลือก 'กะเช้า' หรือ 'กะดึก' ค่ะ", "⏰", false);
@@ -245,7 +259,6 @@
             if (status === "BEFORE") return showModernToast("ยังไม่ถึงเวลา", `ช่วง ${type} ของ ${selectedShiftName} ยังไม่เปิดค่ะ`, "⏳", false);
             if (status === "AFTER") return showModernToast("เกินเวลา", `เกินกำหนดแจ้ง ${type} แล้วค่ะ`, "❌", false);
             
-            // เช็ค Cooldown แบบแยก เข้า/ออก
             const lastTime = localStorage.getItem(`last_${name}_${type}`);
             if (lastTime) {
                 const diff = (new Date() - new Date(lastTime)) / 60000;
