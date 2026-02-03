@@ -23,7 +23,17 @@
             font-size: 14px; 
             color: #334155; 
             overscroll-behavior-y: contain; /* ป้องกันการดึงเพื่อ Refresh ใน iPhone */
+            
+            /* แก้ไข: ดันเนื้อหาลงมาจากส่วน Status Bar อัตโนมัติ */
+            padding-top: env(safe-area-inset-top);
+            min-height: calc(100vh + env(safe-area-inset-top));
         }
+        
+        /* เพิ่มเติม: ส่วนเว้นระยะของ Container หลัก */
+        .main-container {
+            padding-top: 1.5rem; /* ระยะห่างเพิ่มเติมหลังจากพ้น Safe Area มาแล้ว */
+        }
+
         .glass-popup { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); }
         .pop-in { animation: springIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .shift-active { border: 3px solid #3b82f6 !important; background-color: #ffffff !important; box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2); }
@@ -34,7 +44,7 @@
     </style>
 </head>
 <body class="antialiased">
-    <div class="max-w-md mx-auto min-h-screen flex flex-col p-5">
+    <div class="max-w-md mx-auto min-h-screen flex flex-col p-5 main-container">
         
         <div class="flex flex-col items-center mb-6 space-y-3">
             <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tighter italic">WORK <span class="text-blue-600">SMART</span></h1>
