@@ -32,7 +32,7 @@
                 <input type="password" id="pField" placeholder="Password" class="w-full p-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-blue-500 outline-none font-bold transition-all">
             </div>
             <button onclick="checkAdminLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black mt-8 uppercase shadow-lg transition-all active:scale-95">เข้าสู่ระบบ</button>
-            <button onclick="location.href='index.html'" class="w-full text-slate-400 font-bold text-[14px] mt-6 text-center uppercase tracking-widest hover:text-slate-600 transition-colors">← กลับไปหน้าบันทึกเวลา</button>
+            <button onclick="location.href='index.html'" class="w-full text-slate-400 font-bold text-[14px] mt-6 text-center uppercase tracking-widest hover:text-slate-600 transition-colors">← กลับไปหน้าหลัก</button>
         </div>
     </div>
 
@@ -46,22 +46,22 @@
                 </div>
                 <div class="flex gap-2 w-full md:w-auto">
                     <button onclick="fetchHistory()" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-16 font-black shadow-lg active:scale-95 transition-all uppercase italic">รีเฟรช</button>
-                    <button onclick="location.href='index.html'" class="flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 px-6 py-3 rounded-2xl text-16 font-black active:scale-95 transition-all uppercase italic hover:bg-rose-50 shadow-sm">ออก</button>
+                    <button onclick="location.reload()" class="flex-1 md:flex-none bg-white text-rose-500 border border-rose-100 px-6 py-3 rounded-2xl text-16 font-black active:scale-95 transition-all uppercase italic hover:bg-rose-50 shadow-sm">ออก</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 animate-fadeIn">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
                     <p class="text-[14px] font-black text-slate-400 uppercase italic">พนักงานทั้งหมด</p>
-                    <p id="statCount" class="text-2xl font-black text-slate-800 italic uppercase">0 คน</p>
+                    <p id="statCount" class="text-2xl font-black text-slate-800 italic uppercase">...</p>
                 </div>
                 <div class="bg-emerald-500 p-6 rounded-[2rem] shadow-lg shadow-emerald-500/20">
-                    <p class="text-[14px] font-black text-emerald-100 uppercase italic">รายการบันทึกวันนี้</p>
-                    <p id="todayInCount" class="text-2xl font-black text-white italic">0 รายการ</p> 
+                    <p class="text-[14px] font-black text-emerald-100 uppercase italic">รายการล่าสุด</p>
+                    <p id="todayInCount" class="text-2xl font-black text-white italic">0</p> 
                 </div>
                 <div class="bg-slate-800 p-6 rounded-[2rem] shadow-lg shadow-slate-800/20">
-                    <p class="text-[14px] font-black text-slate-400 uppercase italic">จัดการฐานข้อมูล</p>
-                    <a href="https://docs.google.com/spreadsheets/d/1T9SGAGI4525KLN2_nywkN1TvvY9qkUNJYGk8L0s7Bkw/edit" target="_blank" class="text-white font-bold text-[10px] underline decoration-blue-500 underline-offset-4 hover:text-blue-400 transition-colors uppercase italic">เปิด Google Sheet ↗</a>
+                    <p class="text-[14px] font-black text-slate-400 uppercase italic">ฐานข้อมูล</p>
+                    <a href="https://docs.google.com/spreadsheets/d/1T9SGAGI4525KLN2_nywkN1TvvY9qkUNJYGk8L0s7Bkw/edit" target="_blank" class="text-white font-bold text-[10px] underline decoration-blue-500 underline-offset-4 hover:text-blue-400 transition-colors uppercase italic">VIEW SHEET ↗</a>
                 </div>
             </div>
 
@@ -72,7 +72,7 @@
                 </h4>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <select id="adminEmpFilter" class="flex-1 p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 shadow-inner">
-                        <option value="">-- โหลดรายชื่อ... --</option>
+                        <option value="">-- กำลังเชื่อมต่อ API... --</option>
                     </select>
                     <button id="searchBtn" onclick="searchUserHistory()" class="bg-slate-800 text-white px-8 py-4 rounded-3xl font-black hover:bg-black transition-all active:scale-95 uppercase italic text-18">ค้นหาข้อมูล</button>
                 </div>
@@ -82,20 +82,20 @@
                 <div class="bg-white rounded-[2.5rem] shadow-xl border-t-8 border-blue-500 overflow-hidden">
                     <div class="p-6 bg-slate-50 flex justify-between items-center border-b border-slate-100">
                         <div>
-                            <h3 id="searchTitle" class="font-black italic uppercase text-blue-600 text-lg">Report: -</h3>
+                            <h3 id="searchTitle" class="font-black italic uppercase text-blue-600 text-lg">REPORT: -</h3>
                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ประวัติการทำงานรายบุคคล</p>
                         </div>
-                        <button onclick="document.getElementById('searchResultSection').classList.add('hidden-page')" class="text-[10px] font-black bg-rose-100 text-rose-600 px-4 py-2 rounded-xl uppercase hover:bg-rose-200">ปิดรายงาน X</button>
+                        <button onclick="document.getElementById('searchResultSection').classList.add('hidden-page')" class="text-[10px] font-black bg-rose-100 text-rose-600 px-4 py-2 rounded-xl uppercase hover:bg-rose-200">CLOSE X</button>
                     </div>
                     <div class="table-container">
-                        <table class="w-full text-left min-w-[700px]">
+                        <table class="w-full text-left min-w-[800px]">
                             <thead>
                                 <tr class="bg-slate-50/50">
                                     <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">วัน/เวลา</th>
                                     <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">สถานที่</th>
                                     <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">กะทำงาน</th>
                                     <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">ประเภท</th>
-                                    <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">หมายเหตุ</th>
+                                    <th class="p-4 text-[10px] font-black text-slate-400 uppercase italic">หมายเหตุ/เวลาทำ</th>
                                 </tr>
                             </thead>
                             <tbody id="searchTableBody" class="text-sm font-medium text-slate-600"></tbody>
@@ -109,6 +109,8 @@
 
     <script>
         const MY_CRED = { u: "Admin", p: "Dexdee123" };
+        
+        // --- ⚠️ สำคัญมาก: เปลี่ยนลิงก์ด้านล่างให้เป็น Web App URL ล่าสุดของคุณ ⚠️ ---
         const API_URL = "https://script.google.com/macros/s/AKfycbyEqPzr-R_4p8_evzSiaVSisROSm-mPgp0MR8TZpxwCnL5NnjaHCKlcFV0EobPWbdD4/exec";
 
         function checkAdminLogin() {
@@ -120,24 +122,37 @@
                 document.body.className = "bg-slate-50";
                 fetchHistory(); 
             } else {
-                alert("❌ รหัสผ่านไม่ถูกต้อง");
+                alert("❌ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
             }
         }
 
         async function fetchHistory() {
             const filterSelect = document.getElementById('adminEmpFilter');
+            filterSelect.innerHTML = '<option value="">-- กำลังโหลดรายชื่อ... --</option>';
+            
             try {
                 const res = await fetch(`${API_URL}?action=getData&t=${new Date().getTime()}`);
-                const data = await res.json();
+                if (!res.ok) throw new Error('Network response was not ok');
                 
-                document.getElementById('statCount').innerText = `${data.employees.length} คน`;
-                document.getElementById('todayInCount').innerText = `${data.recentActivity.length} รายการล่าสุด`;
+                const data = await res.json();
+                console.log("Data Received:", data); // ดูข้อมูลใน Console (F12)
 
-                filterSelect.innerHTML = '<option value="">-- เลือกชื่อพนักงาน --</option>' + 
-                    data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
+                // 1. อัปเดต Stats
+                document.getElementById('statCount').innerText = `${data.employees ? data.employees.length : 0} คน`;
+                document.getElementById('todayInCount').innerText = `${data.recent ? data.recent.length : 0} รายการ`;
+
+                // 2. โหลดรายชื่อลง Dropdown
+                if (data.employees && data.employees.length > 0) {
+                    filterSelect.innerHTML = '<option value="">-- เลือกชื่อพนักงาน --</option>' + 
+                        data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
+                } else {
+                    filterSelect.innerHTML = '<option value="">❌ ไม่พบรายชื่อพนักงานในระบบ</option>';
+                }
                 
             } catch (err) {
                 console.error("Fetch Error:", err);
+                filterSelect.innerHTML = '<option value="">❌ เชื่อมต่อ API ล้มเหลว</option>';
+                alert("ไม่สามารถดึงข้อมูลได้: \n1. เช็คว่า Deploy Web App เป็น 'Anyone' หรือยัง? \n2. เช็คชื่อ Sheet 'พนักงาน' ว่าตรงไหม?");
             }
         }
 
@@ -154,32 +169,38 @@
             btn.innerText = "กำลังค้นหา...";
             searchSection.classList.remove('hidden-page');
             searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-blue-400 animate-pulse font-black uppercase text-xs italic">กำลังดึงข้อมูล...</td></tr>';
-            searchTitle.innerText = `Report: ${name}`;
+            searchTitle.innerText = `REPORT: ${name}`;
 
             try {
                 const res = await fetch(`${API_URL}?action=getIndividual&name=${encodeURIComponent(name)}&t=${new Date().getTime()}`);
                 const data = await res.json();
-                
-                if (!data.records || data.records.length === 0) {
-                    searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-slate-300 uppercase font-black italic text-xs">ไม่พบข้อมูลของคนนี้</td></tr>';
+                const list = data.history || [];
+
+                if (list.length === 0) {
+                    searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-slate-300 uppercase font-black italic text-xs">ไม่พบข้อมูลของพนักงานท่านนี้</td></tr>';
                 } else {
-                    searchBody.innerHTML = data.records.map(row => {
+                    searchBody.innerHTML = list.map(row => {
                         const typeStyle = row.type.includes('เข้างาน') ? 'text-emerald-500 bg-emerald-50' : 
                                          row.type.includes('ออกงาน') ? 'text-rose-500 bg-rose-50' : 'text-blue-500 bg-blue-50';
+                        
+                        let noteText = row.note || '-';
+                        if (row.duration) noteText += ` (รวม: ${row.duration})`;
+
                         return `
                         <tr class="border-b border-slate-50 hover:bg-blue-50/30 transition-colors">
                             <td class="p-4 text-[10px] font-black text-slate-500 italic">${row.date} ${row.time}</td>
-                            <td class="p-4 text-[10px] font-black text-slate-600 uppercase italic">${row.location || row.loc || '-'}</td>
+                            <td class="p-4 text-[10px] font-black text-slate-600 uppercase italic">${row.location || '-'}</td>
                             <td class="p-4 text-[10px] font-black text-slate-500 italic uppercase">${row.shift || '-'}</td>
                             <td class="p-4">
                                 <span class="font-black uppercase text-[9px] px-2 py-1 rounded-lg italic ${typeStyle}">${row.type}</span>
                             </td>
-                            <td class="p-4 text-[10px] text-slate-400 italic font-bold uppercase truncate-2">${row.note || '-'}</td>
+                            <td class="p-4 text-[10px] text-slate-400 italic font-bold uppercase truncate-2">${noteText}</td>
                         </tr>`;
                     }).join('');
                 }
                 searchSection.scrollIntoView({ behavior: 'smooth' });
             } catch (err) {
+                console.error(err);
                 searchBody.innerHTML = '<tr><td colspan="5" class="p-10 text-center text-rose-500 font-black italic">❌ ค้นหาไม่สำเร็จ</td></tr>';
             } finally {
                 btn.disabled = false;
