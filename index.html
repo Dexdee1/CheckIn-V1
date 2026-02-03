@@ -40,10 +40,10 @@
     <div class="max-w-md mx-auto min-h-screen flex flex-col p-5 main-container">
         
         <div class="flex flex-col items-center mb-6 space-y-3">
-            <h1 class="text-4xl font-black text-slate-800 uppercase tracking-tighter italic">WORK <span class="text-blue-600">SMART</span></h1>
+            <h1 class="text-5xl font-black text-slate-800 uppercase tracking-tighter italic">WORK <span class="text-blue-600">SMART</span></h1>
             <div class="flex gap-2 w-full justify-center">
-                <button onclick="showRulePopup()" class="flex-1 max-w-[120px] font-black bg-white text-slate-500 py-2.5 rounded-full uppercase border border-slate-200 shadow-sm text-[11px] italic">กฎระเบียบ</button>
-                <button onclick="location.href='admin.html'" class="flex-1 max-w-[120px] font-black bg-yellow-300 text-black py-2.5 rounded-full uppercase border border-yellow-400 shadow-sm text-[11px] italic">แอดมิน</button>
+                <button onclick="showRulePopup()" class="flex-1 max-w-[120px] font-black bg-white text-slate-500 py-2.5 rounded-full uppercase border border-slate-200 shadow-sm text-[14px] ">กฎระเบียบ</button>
+                <button onclick="location.href='admin.html'" class="flex-1 max-w-[120px] font-black bg-yellow-300 text-black py-2.5 rounded-full uppercase border border-yellow-400 shadow-sm text-[14px] ">แอดมิน</button>
             </div>
         </div>
 
@@ -71,16 +71,16 @@
                 <div class="grid grid-cols-2 gap-4">
                     <button id="shiftMorning" onclick="selectShift(this, 'กะเช้า')" class="shift-btn bg-white p-5 rounded-[2rem] shadow-sm border-2 border-transparent font-bold transition-all text-center">
                         <span class="block text-2xl mb-1">☀️</span>
-                        <span class="block text-lg italic font-black">กะเช้า</span>
+                        <span class="block text-lg  font-black">กะเช้า</span>
                     </button>
                     <button id="shiftNight" onclick="selectShift(this, 'กะดึก')" class="shift-btn bg-white p-5 rounded-[2rem] shadow-sm border-2 border-transparent font-bold transition-all text-center">
                         <span class="block text-2xl mb-1">🌙</span>
-                        <span class="block text-lg italic font-black">กะดึก</span>
+                        <span class="block text-lg  font-black">กะดึก</span>
                     </button>
                 </div>
                 <div class="grid grid-cols-2 gap-4 pt-2">
-                    <button onclick="handleAction('เข้างาน')" class="bg-emerald-500 text-white py-5 rounded-[2.2rem] font-black shadow-lg shadow-emerald-200 active:scale-95 transition-all text-lg italic uppercase">เข้างาน</button>
-                    <button onclick="handleAction('ออกงาน')" class="bg-rose-500 text-white py-5 rounded-[2.2rem] font-black shadow-lg shadow-rose-200 active:scale-95 transition-all text-lg italic uppercase">ออกงาน</button>
+                    <button onclick="handleAction('เข้างาน')" class="bg-emerald-500 text-white py-5 rounded-[2.2rem] font-black shadow-lg shadow-emerald-200 active:scale-95 transition-all text-lg  uppercase">เข้างาน</button>
+                    <button onclick="handleAction('ออกงาน')" class="bg-rose-500 text-white py-5 rounded-[2.2rem] font-black shadow-lg shadow-rose-200 active:scale-95 transition-all text-lg  uppercase">ออกงาน</button>
                 </div>
             </section>
 
@@ -90,10 +90,10 @@
                     <h2 class="font-black text-slate-700 italic uppercase text-sm">การลางาน & อื่นๆ</h2>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="handleLeave(this, 'ลากิจ')" class="bg-white py-4 rounded-2xl shadow-sm text-amber-600 font-black border border-white italic text-[13px]">📝 ลากิจ</button>
-                    <button onclick="handleLeave(this, 'ลาป่วย')" class="bg-white py-4 rounded-2xl shadow-sm text-rose-600 font-black border border-white italic text-[13px]">🤒 ลาป่วย</button>
-                    <button onclick="handleLeave(this, 'สลับหยุด')" class="bg-white py-4 rounded-2xl shadow-sm text-emerald-600 font-black border border-white italic text-[13px]">🔄 สลับหยุด</button>
-                    <button onclick="handleLeave(this, 'ออกก่อนเวลา')" class="bg-white py-4 rounded-2xl shadow-sm text-blue-600 font-black border border-white italic text-[13px]">🏃 ออกก่อน</button>
+                    <button onclick="handleLeave(this, 'ลากิจ')" class="bg-white py-4 rounded-2xl shadow-sm text-amber-600 font-black border border-white  text-[13px]">⚠️ ลากิจ</button>
+                    <button onclick="handleLeave(this, 'ลาป่วย')" class="bg-white py-4 rounded-2xl shadow-sm text-rose-600 font-black border border-white  text-[13px]">☣️ ลาป่วย</button>
+                    <button onclick="handleLeave(this, 'สลับหยุด')" class="bg-white py-4 rounded-2xl shadow-sm text-emerald-600 font-black border border-white  text-[13px]">♻️ สลับหยุด</button>
+                    <button onclick="handleLeave(this, 'ออกก่อนเวลา')" class="bg-white py-4 rounded-2xl shadow-sm text-blue-600 font-black border border-white  text-[13px]">🚸 ออกก่อน</button>
                 </div>
             </section>
 
