@@ -302,8 +302,8 @@
             
             document.getElementById('leaveModalTitle').innerText = "รายการ: " + type;
             
-            // ตรวจสอบชื่อปุ่มให้ตรงกับใน HTML
-            if (type === 'สลับวันหยหยุด' || type === 'สลับหยุด') {
+            // ใช้ includes เพื่อแก้ปัญหาเรื่องการสะกดคำผิดในปุ่ม ปฏิทิน 2 อันจะแสดงแน่นอน
+            if (type.includes('สลับ')) {
                 document.getElementById('date2Area').classList.remove('hidden');
                 document.getElementById('dateLabel1').innerText = "วันที่ต้องการหยุด";
             } else {
@@ -342,33 +342,36 @@
             `).join('');
         }
 
-       async function confirmLeaveSubmit() {
-    if (datesSet1.length === 0) return alert("เลือกวันที่ก่อนค่ะ");
-    
-    // ตรวจสอบว่าเลือกกะหรือยัง ถ้าอยากให้บังคับเลือกกะก่อนลา
-    if (!selectedShiftName) return alert("กรุณาเลือก กะเช้า หรือ กะดึก ก่อนแจ้งรายการค่ะ");
+        async function confirmLeaveSubmit() {
+            if (datesSet1.length === 0) return alert("เลือกวันที่ก่อนค่ะ");
+            
+            // ดักไว้ว่าต้องเลือกกะก่อนเสมอ
+            if (!selectedShiftName) return alert("กรุณาเลือก กะเช้า หรือ กะดึก ก่อนส่งข้อมูลค่ะ");
 
-    const extraNote = document.getElementById('leaveNote').value.trim();
-    let finalNote = `[${currentLeaveType}] วันที่: ${datesSet1.join(', ')}`;
-    
-    if (currentLeaveType === 'สลับวันหยหยุด') {
-        finalNote += ` | แทนวันที่: ${datesSet2.join(', ')}`;
-    }
-    
-    if (extraNote) {
-        finalNote += ` (หมายเหตุ: ${extraNote})`;
-    }
+            const isSwap = currentLeaveType.includes('สลับ');
+            if (isSwap && datesSet2.length === 0) return alert("กรุณาเลือกวันที่มาทำงานแทนด้วยค่ะ");
 
-    closeLeaveModal();
-    executeSubmit(
-        document.getElementById('empList').value, 
-        document.getElementById('locList').value || "-", 
-        currentLeaveType, 
-        selectedShiftName, // <--- แก้เป็นตัวแปรนี้ เพื่อให้ส่งชื่อกะที่เลือกไว้ไปที่ Sheet
-        finalNote, 
-        false
-    );
-}
+            const extraNote = document.getElementById('leaveNote').value.trim();
+            let finalNote = `[${currentLeaveType}] หยุด: ${datesSet1.join(', ')}`;
+            
+            if (isSwap) {
+                finalNote += ` | แทน: ${datesSet2.join(', ')}`;
+            }
+            
+            if (extraNote) {
+                finalNote += ` (หมายเหตุ: ${extraNote})`;
+            }
+
+            closeLeaveModal();
+            executeSubmit(
+                document.getElementById('empList').value, 
+                document.getElementById('locList').value || "-", 
+                currentLeaveType, 
+                selectedShiftName, // แก้จาก "-" เป็นตัวแปรนี้เพื่อให้ค่า กะเช้า/ดึก เข้า Sheet
+                finalNote, 
+                false
+            );
+        }
 
         function getSmartTimeNote(type, shift) {
             const now = new Date(); 
