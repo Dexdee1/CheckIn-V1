@@ -66,7 +66,7 @@
             <section class="space-y-4">
                 <div class="flex items-center gap-2 px-2">
                     <div class="w-2 h-5 bg-orange-500 rounded-full"></div>
-                    <h2 class="font-black text-slate-700 italic uppercase text-sm">ระบบกะ 12 ชม.</h2>
+                    <h2 class="font-black text-slate-700 italic uppercase text-sm">ระบบกะ 12 ชม. (เป้าหมาย 08:00 / 20:00)</h2>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <button id="shiftMorning" onclick="selectShift(this, 'กะเช้า')" class="shift-btn bg-white p-5 rounded-[2rem] shadow-sm border-2 border-transparent font-bold transition-all text-center">
@@ -117,7 +117,6 @@
     <div id="leaveModal" class="fixed inset-0 z-[1100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl pop-in max-h-[90vh] overflow-y-auto">
             <h3 id="leaveModalTitle" class="text-2xl font-black text-slate-800 italic uppercase mb-4 underline decoration-blue-500 text-center">แจ้งรายการ</h3>
-            
             <div class="space-y-5 text-left">
                 <div>
                     <label id="dateLabel1" class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest italic">วันที่ต้องการหยุด (เลือกได้หลายวัน)</label>
@@ -127,7 +126,6 @@
                     </div>
                     <div id="dateListDisplay1" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
-
                 <div id="date2Area" class="hidden border-t border-slate-100 pt-4">
                     <label class="font-black text-blue-500 text-[10px] uppercase ml-2 tracking-widest italic">วันที่มาทำงานแทน (เลือกได้หลายวัน)</label>
                     <div class="flex gap-2 mt-1">
@@ -136,13 +134,11 @@
                     </div>
                     <div id="dateListDisplay2" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
-
                 <div>
                     <label class="font-black text-slate-400 text-[10px] uppercase ml-2 tracking-widest italic">หมายเหตุเพิ่มเติม</label>
                     <textarea id="leaveNote" rows="2" placeholder="ใส่เหตุผล (ถ้ามี)..." class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none font-bold text-slate-700 mt-1 shadow-inner text-sm"></textarea>
                 </div>
             </div>
-
             <div class="flex gap-3 mt-8">
                 <button onclick="closeLeaveModal()" class="flex-1 bg-slate-100 text-slate-500 py-4 rounded-2xl font-black uppercase italic">ยกเลิก</button>
                 <button onclick="confirmLeaveSubmit()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black uppercase italic shadow-lg shadow-blue-200">ส่งข้อมูล</button>
@@ -162,276 +158,6 @@
         </div>
     </div>
 
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyEqPzr-R_4p8_evzSiaVSisROSm-mPgp0MR8TZpxwCnL5NnjaHCKlcFV0EobPWbdD4/exec";
-        const COOLDOWN_MINUTES = 5; 
-        let selectedShiftName = "";
-        let isProcessing = false;
-        let datesSet1 = [];
-        let datesSet2 = [];
-        let currentLeaveType = "";
-
-        window.onload = () => fetchInitialData();
-
-        async function fetchInitialData() {
-            try {
-                const res = await fetch(API_URL + "?action=getData");
-                const data = await res.json();
-                document.getElementById('empList').innerHTML = '<option value="">-- เลือกพนักงาน --</option>' + data.employees.map(e => `<option value="${e}">${e}</option>`).join('');
-                document.getElementById('locList').innerHTML = '<option value="">-- เลือกเว็บที่ทำงาน --</option>' + data.locations.map(l => `<option value="${l}">${l}</option>`).join('');
-                renderActivities(data.recent);
-            } catch (e) { document.getElementById('empList').innerHTML = '<option value="">❌ โหลดไม่สำเร็จ</option>'; }
-        }
-
-        async function loadRecentActivities() {
-            document.getElementById('loadingStatus').classList.remove('hidden');
-            try {
-                const res = await fetch(API_URL + "?action=getRecent");
-                const data = await res.json();
-                renderActivities(data.recent);
-            } catch (e) { console.error("Load fail"); }
-            finally { document.getElementById('loadingStatus').classList.add('hidden'); }
-        }
-
-        function renderActivities(list) {
-            const listEl = document.getElementById('recentActivityList');
-            if (!list || list.length === 0) {
-                listEl.innerHTML = '<div class="p-6 text-center text-slate-400 italic text-xs">ยังไม่มีประวัติวันนี้</div>';
-                return;
-            }
-            listEl.innerHTML = list.map(item => `
-                <div class="p-4 flex justify-between items-center bg-white/40 activity-item">
-                    <div class="flex flex-col">
-                        <span class="font-black text-slate-700 text-[13px]">${item.name}</span>
-                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">${item.time} | ${item.shift}</span>
-                        ${item.duration ? `<span class="text-[11px] text-blue-600 font-black italic mt-1 animate-pulse">⏱️ ${item.duration}</span>` : ''}
-                        <span class="text-[9px] text-slate-400 mt-0.5">${item.note || ''}</span>
-                    </div>
-                    <div class="flex flex-col items-end gap-1">
-                        <span class="px-3 py-1 rounded-full text-[9px] font-black italic uppercase 
-                            ${item.type === 'เข้างาน' ? 'bg-emerald-100 text-emerald-600' : 
-                              item.type === 'ออกงาน' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600'}">
-                            ${item.type}
-                        </span>
-                        <span class="text-[9px] text-slate-400 italic">${item.loc || ''}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function executeSubmit(name, loc, type, shift, noteValue, saveCool) {
-            try {
-                isProcessing = true;
-                document.body.style.opacity = "0.6";
-                
-                const payload = {
-                    name: name,
-                    location: loc,
-                    type: type,
-                    shift: shift,
-                    note: noteValue
-                };
-
-                const res = await fetch(API_URL, { 
-                    method: "POST", 
-                    body: JSON.stringify(payload) 
-                });
-                
-                const data = await res.json();
-                if(data.status === "success") {
-                    if (saveCool) localStorage.setItem(`last_${name}_${type}`, new Date().toISOString());
-                    
-                    let successMsg = `${type}<br><span class='text-slate-500 text-xs'>${noteValue}</span>`;
-                    if (data.duration) successMsg += `<br><span class="text-blue-600 font-black">⏱️ รวมเวลา: ${data.duration}</span>`;
-                    
-                    showModernToast("สำเร็จ!", successMsg, "✅", true);
-                    loadRecentActivities();
-                }
-            } catch (e) {
-                showModernToast("Error", "การส่งข้อมูลขัดข้อง", "📡", false);
-            } finally {
-                isProcessing = false;
-                document.body.style.opacity = "1";
-            }
-        }
-
-        function handleAction(type) {
-            if (isProcessing) return;
-            const name = document.getElementById('empList').value;
-            const loc = document.getElementById('locList').value;
-
-            if (!name) return showModernToast("ข้อมูลไม่ครบ", "กรุณาเลือกชื่อพนักงานค่ะ", "👤", false);
-            if (!loc) return showModernToast("ข้อมูลไม่ครบ", "กรุณาเลือกเว็บที่ทำงานค่ะ", "📍", false);
-            if (!selectedShiftName) return showModernToast("ข้อมูลไม่ครบ", "กรุณากดเลือก 'กะเช้า' หรือ 'กะดึก' ค่ะ", "⏰", false);
-
-            const status = checkShiftWindow(type);
-            if (status === "BEFORE") return showModernToast("ยังไม่ถึงเวลา", `ช่วง ${type} ของ ${selectedShiftName} ยังไม่เปิดค่ะ`, "⏳", false);
-            if (status === "AFTER") return showModernToast("เกินเวลา", `เกินกำหนดแจ้ง ${type} แล้วค่ะ`, "❌", false);
-            
-            const lastTime = localStorage.getItem(`last_${name}_${type}`);
-            if (lastTime) {
-                const diff = (new Date() - new Date(lastTime)) / 60000;
-                if (diff < COOLDOWN_MINUTES) return showModernToast("บันทึกซ้ำ!", `รออีก ${Math.ceil(COOLDOWN_MINUTES - diff)} นาที`, "⏳", false);
-            }
-            
-            const timeData = getSmartTimeNote(type, selectedShiftName);
-            executeSubmit(name, loc, type, selectedShiftName, timeData.note, true);
-        }
-
-        function checkShiftWindow(action) {
-            const now = new Date();
-            const time = now.getHours() + (now.getMinutes() / 60);
-            let start, end;
-            if (selectedShiftName === "กะเช้า") {
-                if (action === "เข้างาน") { start = 7.0; end = 9.5; } else { start = 18.5; end = 21.0; }
-            } else if (selectedShiftName === "กะดึก") {
-                if (action === "เข้างาน") { start = 18.5; end = 21.0; } else { start = 6.5; end = 9.5; }
-            } else return "NO_SHIFT";
-            return (time < start) ? "BEFORE" : (time > end) ? "AFTER" : "OK";
-        }
-
-        function handleLeave(btn, type) {
-            if (isProcessing) return;
-            const name = document.getElementById('empList').value;
-            if (!name) return showModernToast("ข้อมูลไม่ครบ", "เลือกชื่อก่อนค่ะ", "⚠️", false);
-            
-            currentLeaveType = type; 
-            datesSet1 = []; 
-            datesSet2 = []; 
-            renderDateTags();
-            
-            document.getElementById('leaveModalTitle').innerText = "รายการ: " + type;
-            
-            // ใช้ includes เพื่อแก้ปัญหาเรื่องการสะกดคำผิดในปุ่ม ปฏิทิน 2 อันจะแสดงแน่นอน
-            if (type.includes('สลับ')) {
-                document.getElementById('date2Area').classList.remove('hidden');
-                document.getElementById('dateLabel1').innerText = "วันที่ต้องการหยุด";
-            } else {
-                document.getElementById('date2Area').classList.add('hidden');
-                document.getElementById('dateLabel1').innerText = "วันที่แจ้งลา (เลือกได้หลายวัน)";
-            }
-            
-            document.getElementById('leaveNote').value = "";
-            document.getElementById('leaveModal').classList.remove('hidden');
-        }
-
-        function addDateToList(num) {
-            const input = document.getElementById(`dateInput${num}`);
-            if (!input.value) return;
-            const target = (num === 1) ? datesSet1 : datesSet2;
-            if (!target.includes(input.value)) { 
-                target.push(input.value); 
-                target.sort(); 
-                renderDateTags(); 
-            }
-            input.value = "";
-        }
-
-        function removeDate(num, val) {
-            if (num === 1) datesSet1 = datesSet1.filter(d => d !== val); 
-            else datesSet2 = datesSet2.filter(d => d !== val);
-            renderDateTags();
-        }
-
-        function renderDateTags() {
-            document.getElementById('dateListDisplay1').innerHTML = datesSet1.map(d => `
-                <span class="date-tag">${d} <button onclick="removeDate(1,'${d}')" class="text-rose-500 font-bold ml-1">×</button></span>
-            `).join('');
-            document.getElementById('dateListDisplay2').innerHTML = datesSet2.map(d => `
-                <span class="date-tag bg-blue-100 text-blue-700 border-blue-200">${d} <button onclick="removeDate(2,'${d}')" class="text-rose-500 font-bold ml-1">×</button></span>
-            `).join('');
-        }
-
-        async function confirmLeaveSubmit() {
-            if (datesSet1.length === 0) return alert("เลือกวันที่ก่อนค่ะ");
-            
-            // ดักไว้ว่าต้องเลือกกะก่อนเสมอ
-            if (!selectedShiftName) return alert("กรุณาเลือก กะเช้า หรือ กะดึก ก่อนส่งข้อมูลค่ะ");
-
-            const isSwap = currentLeaveType.includes('สลับ');
-            if (isSwap && datesSet2.length === 0) return alert("กรุณาเลือกวันที่มาทำงานแทนด้วยค่ะ");
-
-            const extraNote = document.getElementById('leaveNote').value.trim();
-            let finalNote = `[${currentLeaveType}] หยุด: ${datesSet1.join(', ')}`;
-            
-            if (isSwap) {
-                finalNote += ` | แทน: ${datesSet2.join(', ')}`;
-            }
-            
-            if (extraNote) {
-                finalNote += ` (หมายเหตุ: ${extraNote})`;
-            }
-
-            closeLeaveModal();
-            executeSubmit(
-                document.getElementById('empList').value, 
-                document.getElementById('locList').value || "-", 
-                currentLeaveType, 
-                selectedShiftName, // แก้จาก "-" เป็นตัวแปรนี้เพื่อให้ค่า กะเช้า/ดึก เข้า Sheet
-                finalNote, 
-                false
-            );
-        }
-
-        function getSmartTimeNote(type, shift) {
-            const now = new Date(); 
-            const cur = (now.getHours() * 60) + now.getMinutes();
-            let target = (type === 'เข้างาน') ? (shift === 'กะเช้า' ? 480 : 1200) : (shift === 'กะเช้า' ? 1110 : 480);
-            let diff = cur - target; 
-            if (diff > 720) diff -= 1440; 
-            if (diff < -720) diff += 1440;
-            return { note: `${type}${diff > 0 ? 'ช้า' : 'ก่อน'} ${Math.abs(diff)} นาที` };
-        }
-
-        function showModernToast(title, msg, icon, auto) {
-            const t = document.getElementById('appToast');
-            const progress = document.getElementById('toastProgress');
-            const closeBtn = document.getElementById('toastCloseBtn');
-            const bar = document.getElementById('toastBar');
-
-            document.getElementById('toastIcon').innerText = icon; 
-            document.getElementById('toastTitle').innerText = title; 
-            document.getElementById('toastMsg').innerHTML = msg;
-            
-            t.classList.remove('hidden');
-            
-            if (auto) {
-                bar.classList.remove('hidden');
-                closeBtn.classList.add('hidden');
-                setTimeout(() => progress.style.width = '100%', 50);
-                setTimeout(() => location.reload(), 2500);
-            } else {
-                bar.classList.add('hidden');
-                closeBtn.classList.remove('hidden');
-                progress.style.width = '0';
-            }
-        }
-
-        function closeToast() { document.getElementById('appToast').classList.add('hidden'); }
-        function closeLeaveModal() { document.getElementById('leaveModal').classList.add('hidden'); }
-        
-        function selectShift(btn, name) {
-            document.querySelectorAll('.shift-btn').forEach(b => b.classList.remove('shift-active'));
-            btn.classList.add('shift-active'); 
-            selectedShiftName = name;
-        }
-
-        function showRulePopup() {
-            const rules = [
-             "1. เข้ามาสายนาทีละ 5.-",
-             "2. ลืมแจ้งเข้างาน 400.- /ครั้ง",
-             "3. ลืมแจ้งออก 250.- /ครั้ง",
-             "4. ลางานครึ่งวันหัก 0.5 แรง/ครั้ง",
-             "5. ทำงานอื่นในเวลางานหัก 1,000.- /ครั้ง",
-             "------------------------------------",
-             "*** กฎระบบ WORK SMART ***",
-             "* ถ้ากดผิดต้องรอ 5 นาที ถึงจะกดซ้ำได้",
-             "* เข้างานกะเช้า: 07:00-09:30",
-             "* เข้างานกะดึก: 18:30-21:00",
-             "* ระบบจะคำนวณ 'สาย' ให้อัตโนมัติ"
-            ];
-            showModernToast("กฎระเบียบ", `<div class='text-left text-xs bg-slate-50 p-4 rounded-2xl'>${rules.map(r=>`<div>${r}</div>`).join('')}</div>`, "📋", false);
-        }
-    </script>
+    <script src="Script.js"></script>
 </body>
 </html>
